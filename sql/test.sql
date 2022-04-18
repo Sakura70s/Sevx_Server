@@ -40,3 +40,11 @@ insert into course(
     1,
     'World'
 );
+
+insert into course(
+    teacher_id,
+    name
+) values (
+    2,
+    'Sakura70s'
+);
