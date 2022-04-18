@@ -1,11 +1,11 @@
-use crate::{state::AppState, error::SEVXError};
+use crate::{state::AppState, error::SEVXError,};
 use actix_web::{web, HttpResponse};
-use crate::db_access::*;
+use crate::db_access::course_db::{new_course_db, get_course_for_teacher_db, get_course_detail_db};
+use crate::models::course_model::*;
 
 /**
  * 添加课程处理器
  */
-use super::models::Course;
 
 pub async fn new_course(
     new_course: web::Json<Course>,

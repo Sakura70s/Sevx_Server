@@ -1,4 +1,4 @@
-use crate::models::*;
+use crate::models::course_model::Course;
 use chrono::NaiveDateTime;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
@@ -90,19 +90,14 @@ pub async fn new_course_db(pool: &PgPool, new_course: Course) -> Result<Course, 
         "#, new_course.teacher_id, new_course.name
     )
         .fetch_one(pool)
-        .await;
+        .await?;
 
-    match row {
-        Ok(row) => Ok(
-            Course {
-                id: Some(row.id),
-                teacher_id: row.teacher_id,
-                name: row.name.clone(),
-                time: Some(NaiveDateTime::from(row.time))
-            }
-        ),
-
-        Err(_row) => Err(SEVXError::DBError("Insert failed".to_string())),
-    }
-
+    Ok(
+        Course {
+            id: Some(row.id),
+            teacher_id: row.teacher_id,
+            name: row.name.clone(),
+            time: Some(NaiveDateTime::from(row.time))
+        }
+    )
 }

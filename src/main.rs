@@ -1,27 +1,24 @@
 use actix_web::{web, App, HttpServer};
 use std::io;
-// use std::sync::Mutex;
 use dotenv::dotenv;
 use std::env;
 use sqlx::postgres::PgPoolOptions;
+use state::AppState;
+use crate::routers::course_router::*;
 
 // 指定模块路径
-#[path = "./handlers.rs"]
+#[path = "./handlers/mod.rs"]
 mod handlers;
-#[path = "./routers.rs"]
+#[path = "./routers/mod.rs"]
 mod routers;
 #[path = "./state.rs"]
 mod state;
-#[path = "./models.rs"]
+#[path = "./models/mod.rs"]
 mod models;
-#[path = "./db_access.rs"]
+#[path = "./db_access/mod.rs"]
 mod db_access;
 #[path = "./error.rs"]
 mod error;
-
-// 引入模块
-use routers::*;
-use state::AppState;
 
 // 定义为 Actix的入口
 #[actix_rt::main]

@@ -1,7 +1,11 @@
-use crate::handlers::*;
+use crate::handlers::course_handler::{
+    new_course,
+    get_course_for_teacher,
+    get_course_detail
+};
 use actix_web::web;
 
-// 添加课程路由
+// 课程路由
 pub fn course_routes(cfg: &mut web::ServiceConfig) {
     cfg
     .service(web::scope("/course")
