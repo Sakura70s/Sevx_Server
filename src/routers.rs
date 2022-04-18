@@ -1,11 +1,6 @@
 use crate::handlers::*;
 use actix_web::web;
 
-// 创建路由，处理 /health的请求
-pub fn general_routes(cfg: &mut web::ServiceConfig) {
-    cfg.route("/health", web::get().to(health_checker_handler));
-}
-
 // 添加课程路由
 pub fn course_routes(cfg: &mut web::ServiceConfig) {
     cfg

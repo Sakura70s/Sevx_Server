@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpServer};
 use std::io;
-use std::sync::Mutex;
+// use std::sync::Mutex;
 use dotenv::dotenv;
 use std::env;
 use sqlx::postgres::PgPoolOptions;
@@ -33,23 +33,23 @@ async fn main() -> io::Result<()> {
     // 设置连接字符串
     let database_url = env::var("DATABASE_URL").expect("Not Found");
 
+    // 创建连接池
     let db_pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
+    // 暂时不知道
     let shared_data = web::Data::new(
         AppState {
-            health_checker_response: "I am OK.".to_string(),
-            visit_count: Mutex::new(0),
-            // course: Mutex::new(vec![]),
             db: db_pool,
         }
     );
 
+    // 构建App
     let app = move || {
         App::new()
             .app_data(shared_data.clone())
-            .configure(general_routes)
             .configure(course_routes)
     };
 
+    // 程序入口（开始监听）
     HttpServer::new(app).bind("127.0.0.1:3000")?.run().await
 }

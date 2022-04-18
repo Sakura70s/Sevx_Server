@@ -4,9 +4,9 @@ use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 
 /**
- * 已实现自定义错误类型
- * 获取一个老师下的所有课程
- * 更改为 await后加？，同时将函数返回值改为 Result
+ * 已实现错误处理
+ * 获取一个老师下的所有课程！！！
+ * 成功返回 Vec，出错返回 SEVXError
  */
 pub async fn get_course_for_teacher_db(pool: &PgPool, teacher_id: i32) -> Result<Vec<Course>, SEVXError> {
     let rows = sqlx::query!(
@@ -40,9 +40,11 @@ pub async fn get_course_for_teacher_db(pool: &PgPool, teacher_id: i32) -> Result
 }
 
 /**
+ * 已实现错误处理
  * 获取一个老师下的单独课程
+ * match 到 Ok 返回 Course，否则返回 SEVXError
  */
-pub async fn get_course_detail_db(pool: &PgPool, teacher_id: i32, course_id: i32) -> Course {
+pub async fn get_course_detail_db(pool: &PgPool, teacher_id: i32, course_id: i32) -> Result<Course, SEVXError> {
     let row = sqlx::query!(
         r#"
             Select id, teacher_id, name, time
@@ -51,22 +53,29 @@ pub async fn get_course_detail_db(pool: &PgPool, teacher_id: i32, course_id: i32
         "#, teacher_id, course_id 
     )
         .fetch_one(pool)
-        .await
-        .unwrap();
+        .await;
 
-    Course {
-        id: Some(row.id),
-        teacher_id: row.teacher_id,
-        name: row.name.clone(),
-        time: Some(NaiveDateTime::from(row.time))
+    match row {
+        Ok(row) => Ok(
+            Course {
+                id: Some(row.id),
+                teacher_id: row.teacher_id,
+                name: row.name.clone(),
+                time: Some(NaiveDateTime::from(row.time)),
+            }
+        ),
+
+        Err(_row) => Err(SEVXError::NotFound("Course Id not found".to_string()))
     }
 
 }
 
 /**
+ * 已实现错误处理
  * 新增课程
+ * match 到 Ok 返回 Course，否则返回 SEVXError
  */
-pub async fn new_course_db(pool: &PgPool, new_course: Course) -> Course {
+pub async fn new_course_db(pool: &PgPool, new_course: Course) -> Result<Course, SEVXError> {
     let row = sqlx::query!(
         r#"
             Insert into course (
@@ -81,13 +90,19 @@ pub async fn new_course_db(pool: &PgPool, new_course: Course) -> Course {
         "#, new_course.teacher_id, new_course.name
     )
         .fetch_one(pool)
-        .await
-        .unwrap();
+        .await;
 
-        Course {
-            id: Some(row.id),
-            teacher_id: row.teacher_id,
-            name: row.name.clone(),
-            time: Some(NaiveDateTime::from(row.time))
-        }
+    match row {
+        Ok(row) => Ok(
+            Course {
+                id: Some(row.id),
+                teacher_id: row.teacher_id,
+                name: row.name.clone(),
+                time: Some(NaiveDateTime::from(row.time))
+            }
+        ),
+
+        Err(_row) => Err(SEVXError::DBError("Insert failed".to_string())),
+    }
+
 }
