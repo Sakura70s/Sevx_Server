@@ -11,6 +11,7 @@ pub enum SEVXError {
     DBError(String),
     ActixError(String),
     NotFound(String),
+    // InvalidTnput(String),
 }
 
 /**
@@ -39,6 +40,10 @@ impl SEVXError {
                 println!("Not Found: {:?}", msg);
                 "Not Found".into()
             }
+            // SEVXError::InvalidTnput(msg) => {
+            //     println!("Invalid parameters received: {:?}", msg);
+            //     msg.into()
+            // }
         }
     }
 }
@@ -51,6 +56,7 @@ impl error::ResponseError for SEVXError {
         match self {
             SEVXError::DBError(_msg) | SEVXError::ActixError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
             SEVXError::NotFound(_msg) => StatusCode::NOT_FOUND,
+            // SEVXError::InvalidTnput(_msg) => StatusCode::BAD_REQUEST,
         }
     }
 

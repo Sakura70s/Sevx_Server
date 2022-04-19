@@ -22,29 +22,36 @@ CREATE TABLE course(
     id serial NOT NULL PRIMARY KEY,
     teacher_id integer NOT NULL,
     name varchar(144) NOT NULL,
-    time timestamp NOT NULL default now()
+    time date NOT NULL default now(),
+    lang varchar(20)
 );
 
 insert into course(
     teacher_id,
-    name
+    name,
+    lang
 ) values (
     1,
-    'Hello'
+    'Hello',
+    'Chinese'
 );
 
 insert into course(
     teacher_id,
-    name
+    name,
+    lang
 ) values (
     1,
-    'World'
+    'World',
+    'Chinese'
 );
 
 insert into course(
     teacher_id,
-    name
+    name,
+    lang
 ) values (
     2,
-    'Sakura70s'
+    'Sakura70s',
+    'English'
 );

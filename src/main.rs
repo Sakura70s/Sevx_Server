@@ -19,6 +19,8 @@ mod models;
 mod db_access;
 #[path = "./error.rs"]
 mod error;
+#[path = "./log.rs"]
+mod log;
 
 // 定义为 Actix的入口
 #[actix_rt::main]
