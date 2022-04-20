@@ -18,6 +18,7 @@ CREATE DATABASE SevenBox;
 
 ------------------------------------------------------------------------------------------------------------------------
 --    创建枚举类型
+--    现在好像没用了，数据库枚举类型 Sqlx库不支持
 ------------------------------------------------------------------------------------------------------------------------
 -- 字幕枚举类型
 CREATE TYPE subTypeENUM AS ENUM (
@@ -40,7 +41,7 @@ CREATE TYPE svTypeENUM AS ENUM (
 CREATE TABLE Animation(
     id serial NOT NULL PRIMARY KEY,
     seriesFlag boolean NOT NULL,
-    seriesId smallint,
+    seriesId smallint NOT NULL Default 0,
     Animation_name varchar(50) NOT NULL,
     Animation_year date NOT NULL,
     director varchar(20) NOT NULL,
@@ -55,10 +56,10 @@ CREATE TABLE Animation(
     container varchar(10) NOT NULL,
     codev varchar(10) NOT NULL,
     codea varchar(10) NOT NULL,
-    subType subTypeENUM NOT NULL,
+    subType varchar(10) NOT NULL,
     subTeam varchar(20),
-    lastWatch date,
-    updateTime date,
+    lastWatch date NOT NULL Default '2012-12-12',
+    updateTime date NOT NULL Default now(),
     remark text
 );
 -- 添加注释
@@ -104,7 +105,7 @@ CREATE TABLE Film(
     container varchar(10) NOT NULL,
     codev varchar(10) NOT NULL,
     codea varchar(10) NOT NULL,
-    subType subTypeENUM NOT NULL,
+    subType varchar(10) NOT NULL,
     subTeam varchar(20),
     lastWatch date,
     updateTime date,
@@ -153,7 +154,7 @@ CREATE TABLE TV(
     container varchar(10) NOT NULL,
     codev varchar(10) NOT NULL,
     codea varchar(10) NOT NULL,
-    subType subTypeENUM NOT NULL,
+    subType varchar(10) NOT NULL,
     subTeam varchar(20),
     lastWatch date,
     updateTime date,
@@ -190,7 +191,7 @@ CREATE TABLE SV(
     SV_name varchar(50) NOT NULL,
     SV_year date NOT NULL,
     author varchar(20) NOT NULL,
-    SV_type svTypeENUM NOT NULL,
+    SV_type varchar(10) NOT NULL,
     localFlag boolean NOT NULL,
     localUrl varchar(50),
     remoteFlag boolean NOT NULL,
@@ -231,7 +232,7 @@ CREATE TABLE Music(
     remoteFlag boolean NOT NULL,
     remoteUrl text,
     container varchar(10) NOT NULL,
-    lyricType subTypeENUM NOT NULL,
+    lyricType varchar(10) NOT NULL,
     remark text
 );
 -- 添加注释
@@ -295,6 +296,7 @@ CREATE TABLE Comic(
     Comic_year date NOT NULL,
     logo text NOT NULL,
     author varchar(20) NOT NULL,
+    Comic_status varchar(20) NOT NULL,
     localFlag boolean NOT NULL,
     localUrl varchar(50),
     remoteFlag boolean NOT NULL,
@@ -310,6 +312,7 @@ COMMENT ON column Comic.Comic_name is '名称';
 COMMENT ON column Comic.Comic_year is '年份';
 COMMENT ON column Comic.logo is '封面';
 COMMENT ON column Comic.author is '作者';
+COMMENT ON column Comic.Comic_status is '连载状态';
 COMMENT ON column Comic.localFlag is '本地Flag';
 COMMENT ON column Comic.localUrl is '本地位置';
 COMMENT ON column Comic.remoteFlag is '远程Flag';
@@ -322,7 +325,90 @@ COMMENT ON column Comic.remark is '备注';
 --    插入测试数据
 ------------------------------------------------------------------------------------------------------------------------
 -- Animation
+Insert into Animation (
+    seriesFlag,
+    seriesId,
+    Animation_name,
+    Animation_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    'CLANNAD',
+    '2007-10-04',
+    '石原立也',
+    '志茂文彦',
+    'Kyoto Animation',
+    'https://static.7os.top/Image/Sakura.png',
+    '24',
+    True,
+    'Disk::M::/BD/CLANNAD',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '内挂',
+    '澄空学园',
+    ''
+);
 
+
+Insert into Animation (
+    seriesFlag,
+    seriesId,
+    Animation_name,
+    Animation_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    'CLANNAD~After Story~',
+    '2008-10-02',
+    '石原立也',
+    '志茂文彦',
+    'Kyoto Animation',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/BD/CLANNAD2',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '内挂',
+    '澄空学园',
+    '这是一个测试备注'
+);
 -- Film
 
 -- TV

@@ -5,6 +5,7 @@ use std::env;
 use sqlx::postgres::PgPoolOptions;
 use state::AppState;
 use crate::routers::course_router::*;
+use crate::routers::animation_router::*;
 
 // 指定模块路径
 #[path = "./handlers/mod.rs"]
@@ -47,6 +48,7 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(shared_data.clone())
             .configure(course_routes)
+            .configure(animation_routes)
     };
 
     // 程序入口（开始监听）
