@@ -78,11 +78,8 @@ pub async fn post_new_course_db(pool: &PgPool, new_course: CourseAdd) -> Result<
                 teacher_id,
                 name,
                 lang
-            )
-            Values (
-                $1,
-                $2,
-                $3
+            ) Values (
+                $1, $2, $3
             )
             Returning id, teacher_id, name, time, lang
         "#, new_course.teacher_id, new_course.name, new_course.lang

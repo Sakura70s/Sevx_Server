@@ -53,14 +53,13 @@ pub struct CourseUpdate {
 impl TryFrom<web::Json<CourseAdd>> for CourseAdd {
     type Error = SEVXError;
 
-    fn try_from(course: web::Json<CourseAdd>)
-        -> Result<Self, Self::Error> {
-            Ok(CourseAdd {
-                teacher_id: course.teacher_id,
-                name: course.name.clone(),
-                lang: course.lang.clone(),
-            })
-        }
+    fn try_from(course: web::Json<CourseAdd>) -> Result<Self, Self::Error> {
+        Ok(CourseAdd {
+            teacher_id: course.teacher_id,
+            name: course.name.clone(),
+            lang: course.lang.clone(),
+        })
+    }
 }
 
 /**

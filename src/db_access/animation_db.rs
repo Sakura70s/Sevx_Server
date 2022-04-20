@@ -18,26 +18,26 @@ pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXE
     let animation_vec: Vec<Animation> = rows.iter()
     .map(|item| Animation{
         id: item.id,
-        series_flag: item.seriesflag,
-        series_id: item.seriesid,
+        seriesflag: item.seriesflag,
+        seriesid: item.seriesid,
         animation_name: item.animation_name.clone(),
         animation_year: item.animation_year,
         director: item.director.clone(),
-        screen_writer: item.screenwriter.clone(),
+        screenwriter: item.screenwriter.clone(),
         make: item.make.clone(),
         logo: item.logo.clone(),
         amount: item.amount,
-        local_flag: item.localflag,
-        local_url: item.localurl.clone(),
-        remote_flag: item.remoteflag,
-        remote_url: item.remoteurl.clone(),
+        localflag: item.localflag,
+        localurl: item.localurl.clone(),
+        remoteflag: item.remoteflag,
+        remoteurl: item.remoteurl.clone(),
         container: item.container.clone(),
         codev: item.codev.clone(),
         codea: item.codea.clone(),
-        sub_type: item.subtype.clone(),
-        sub_team: item.subteam.clone(),
-        last_watch: item.lastwatch,
-        update_time: NaiveDate::from(item.updatetime),
+        subtype: item.subtype.clone(),
+        subteam: item.subteam.clone(),
+        lastwatch: item.lastwatch,
+        updatetime: NaiveDate::from(item.updatetime),
         remark: item.remark.clone(),
     }).collect();
 
@@ -48,4 +48,86 @@ pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXE
             Ok(animation_vec)
         },
     }
+}
+
+/**
+ * 添加动漫
+ */
+pub async fn add_animation_db (
+    pool: &PgPool,
+    add_animation: AddAnimation,
+) -> Result<Animation, SEVXError> {
+    let row = sqlx::query_as!(
+        Animation,
+        "Insert into Animation (
+            seriesFlag,
+            seriesId,
+            Animation_name,
+            Animation_year,
+            director,
+            screenWriter,
+            make,
+            logo,
+            amount,
+            localFlag,
+            localUrl,
+            remoteFlag,
+            remoteUrl,
+            container,
+            codev,
+            codea,
+            subType,
+            subTeam,
+            remark
+        ) Values (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+            $11, $12, $13, $14, $15, $16, $17, $18, $19
+        ) Returning
+        id,
+        seriesFlag,
+        seriesId,
+        animation_name,
+        animation_year,
+        director,
+        screenwriter,
+        make,
+        logo,
+        amount,
+        localflag,
+        localurl,
+        remoteflag,
+        remoteurl,
+        container,
+        codev,
+        codea,
+        subtype,
+        subteam,
+        lastwatch,
+        updatetime,
+        remark",
+        add_animation.seriesflag,
+        add_animation.seriesid,
+        add_animation.animation_name,
+        add_animation.animation_year,
+        add_animation.director,
+        add_animation.screenwriter,
+        add_animation.make,
+        add_animation.logo,
+        add_animation.amount,
+        add_animation.localflag,
+        add_animation.localurl,
+        add_animation.remoteflag,
+        add_animation.remoteurl,
+        add_animation.container,
+        add_animation.codev,
+        add_animation.codea,
+        add_animation.subtype,
+        add_animation.subteam,
+        add_animation.remark
+    )
+    .fetch_one(pool)
+    .await?;
+
+    print_log(format!("Add Animation of name:{}", add_animation.animation_name));
+    Ok(row)
 }
