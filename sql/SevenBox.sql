@@ -91,7 +91,7 @@ COMMENT ON column Animation.remark is '备注';
 CREATE TABLE Film(
     id serial NOT NULL PRIMARY KEY,
     seriesFlag boolean NOT NULL,
-    seriesId smallint,
+    seriesId smallint NOT NULL Default 0,
     Film_name varchar(50) NOT NULL,
     Film_year date NOT NULL,
     director varchar(20) NOT NULL,
@@ -107,8 +107,8 @@ CREATE TABLE Film(
     codea varchar(10) NOT NULL,
     subType varchar(10) NOT NULL,
     subTeam varchar(20),
-    lastWatch date,
-    updateTime date,
+    lastWatch date NOT NULL Default '2012-12-12',
+    updateTime date NOT NULL Default now(),
     remark text
 );
 -- 添加注释
@@ -139,7 +139,7 @@ COMMENT ON column Film.remark is '备注';
 CREATE TABLE TV(
     id serial NOT NULL PRIMARY KEY,
     seriesFlag boolean NOT NULL,
-    seriesId smallint,
+    seriesId smallint NOT NULL Default 0,
     TV_name varchar(50) NOT NULL,
     TV_year date NOT NULL,
     director varchar(20) NOT NULL,
@@ -156,8 +156,8 @@ CREATE TABLE TV(
     codea varchar(10) NOT NULL,
     subType varchar(10) NOT NULL,
     subTeam varchar(20),
-    lastWatch date,
-    updateTime date,
+    lastWatch date NOT NULL Default '2012-12-12',
+    updateTime date NOT NULL Default now(),
     remark text
 );
 -- 添加注释
@@ -257,12 +257,12 @@ COMMENT ON column Music.remark is '备注';
 CREATE TABLE Novel(
     id serial NOT NULL PRIMARY KEY,
     seriesFlag boolean NOT NULL,
-    seriesId smallint,
+    seriesId smallint Default 0,
     Novel_name varchar(50) NOT NULL,
     Novel_year date NOT NULL,
     logo text NOT NULL,
     author varchar(20) NOT NULL,
-    Novel_status varchar(20) NOT NULL,
+    Novelstatus varchar(20) NOT NULL,
     localFlag boolean NOT NULL,
     localUrl varchar(50),
     remoteFlag boolean NOT NULL,
@@ -291,12 +291,12 @@ COMMENT ON column Novel.remark is '备注';
 CREATE TABLE Comic(
     id serial NOT NULL PRIMARY KEY,
     seriesFlag boolean NOT NULL,
-    seriesId smallint,
+    seriesId smallint NOT NULL Default 0,
     Comic_name varchar(50) NOT NULL,
     Comic_year date NOT NULL,
     logo text NOT NULL,
     author varchar(20) NOT NULL,
-    Comic_status varchar(20) NOT NULL,
+    Comicstatus varchar(20) NOT NULL,
     localFlag boolean NOT NULL,
     localUrl varchar(50),
     remoteFlag boolean NOT NULL,

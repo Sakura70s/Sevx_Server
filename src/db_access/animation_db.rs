@@ -6,7 +6,7 @@ use crate::log::print_log;
 
 /**
  * 获取所有动漫列表
- * 成功应返回 Vec，错误应返回SEVXError
+ * 成功应返回 Vec<Animation>，错误应返回SEVXError
  */
 pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXError>{
     let rows = sqlx::query!(
@@ -47,6 +47,32 @@ pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXE
             print_log("Get Animation list".to_string());
             Ok(animation_vec)
         },
+    }
+}
+
+/**
+ * 根据单一 ID 获取具体 动漫
+ * 成功返回 Animation，失败还不清楚
+ */
+pub async fn get_animation_for_id_db (
+    pool: &PgPool,
+    id: i32,
+) -> Result<Animation, SEVXError> {
+    let row = sqlx::query_as!(
+        Animation,
+        "Select * from Animation where id = $1", id
+    )
+    .fetch_optional(pool)
+    .await?;
+
+    match row {
+        // Success
+        Some(row) => {
+            print_log(format!("Get Animation of id:{}, name:[{}]", id, row.animation_name));
+            Ok(row)
+        }
+        // Error
+        _ => Err(SEVXError::NotFound(format!("Animaton of id = {} is not found!", id)))
     }
 }
 

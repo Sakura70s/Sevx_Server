@@ -8,6 +8,8 @@ pub fn animation_routes(cfg: &mut web::ServiceConfig) {
         web::scope("/Animation")
         // 获取动漫路由
         .route("/All", web::get().to(get_all_animation))
+        // 根据 id 获取
+        .route("/{id}", web::get().to(get_animation_for_id))
         // 添加动漫路由
         .route("/Add", web::post().to(add_animation))
     );

@@ -2,6 +2,7 @@ use actix_web::{error, http::StatusCode, HttpResponse, Result};
 use serde::Serialize;
 use sqlx::error::Error as SQLxError;
 use std::fmt;
+use chrono::Local;
 
 /**
  * 自定义错误类型
@@ -29,15 +30,21 @@ impl SEVXError {
     fn error_response(&self) -> String {
         match self {
             SEVXError::DBError(msg) => {
-                println!("Database Error: {:?}", msg);
+                let fmt = "%Y-%m-%d %H:%M:%S";
+                let now = Local::now().format(fmt);
+                println!("{}  Database Error:{:?}",now, msg);
                 "Database Error".into()
             }
             SEVXError::ActixError(msg) => {
-                println!("Actix Error: {:?}", msg);
+                let fmt = "%Y-%m-%d %H:%M:%S";
+                let now = Local::now().format(fmt);
+                println!("{}  Actix Error:{:?}",now, msg);
                 "Actix Error".into()
             }
             SEVXError::NotFound(msg) => {
-                println!("Not Found: {:?}", msg);
+                let fmt = "%Y-%m-%d %H:%M:%S";
+                let now = Local::now().format(fmt);
+                println!("{}  Not Found:{:?}",now, msg);
                 "Not Found".into()
             }
             // SEVXError::InvalidTnput(msg) => {

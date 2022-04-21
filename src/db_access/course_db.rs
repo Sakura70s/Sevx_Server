@@ -55,12 +55,13 @@ pub async fn get_course_detail_db(pool: &PgPool, teacher_id: i32, course_id: i32
         .await?;
 
     match row {
+        // Success
         Some(row) => {
             // Pring Log
             print_log(format!("Get course detail when teacher:{} & course:{}", teacher_id, course_id));
             Ok(row)
         },
-
+        // Error
         _ => Err(SEVXError::NotFound(format!("The course:{} of the teacher:{} not found",course_id, teacher_id)))
     }
 

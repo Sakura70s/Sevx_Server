@@ -15,6 +15,21 @@ pub async fn get_all_animation(
 }
 
 /**
+ * 根据 Id 获取具体动画
+ */
+pub async fn get_animation_for_id (
+    app_state: web::Data<AppState>,
+    params: web::Path<usize>,
+) -> Result<HttpResponse, SEVXError> {
+    // 从 URL 获取 ID
+    let id = i32::try_from(params.into_inner()).unwrap();
+    // 查询数据库
+    get_animation_for_id_db(&app_state.db, id)
+    .await
+    .map(|animation| HttpResponse::Ok().json(animation))
+}
+
+/**
  * 添加动画
  */
 pub async fn add_animation(
