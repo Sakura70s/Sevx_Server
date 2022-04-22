@@ -52,5 +52,5 @@ async fn main() -> io::Result<()> {
     };
 
     // 程序入口（开始监听）
-    HttpServer::new(app).bind("127.0.0.1:3000")?.run().await
+    HttpServer::new(app).bind("localhost:3000")?.run().await
 }

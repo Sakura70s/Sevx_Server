@@ -12,6 +12,7 @@ pub enum SEVXError {
     DBError(String),
     ActixError(String),
     NotFound(String),
+    AuthFailed(String),
     // InvalidTnput(String),
 }
 
@@ -34,19 +35,25 @@ impl SEVXError {
                 let now = Local::now().format(fmt);
                 println!("{}  Database Error:{:?}",now, msg);
                 "Database Error".into()
-            }
+            },
             SEVXError::ActixError(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
                 println!("{}  Actix Error:{:?}",now, msg);
                 "Actix Error".into()
-            }
+            },
             SEVXError::NotFound(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
                 println!("{}  Not Found:{:?}",now, msg);
                 "Not Found".into()
-            }
+            },
+            SEVXError::AuthFailed(msg) => {
+                let fmt = "%Y-%m-%d %H:%M:%S";
+                let now = Local::now().format(fmt);
+                println!("{}  Auth Failed:{:?}",now, msg);
+                "Auth Failed".into()
+            },
             // SEVXError::InvalidTnput(msg) => {
             //     println!("Invalid parameters received: {:?}", msg);
             //     msg.into()
@@ -63,6 +70,7 @@ impl error::ResponseError for SEVXError {
         match self {
             SEVXError::DBError(_msg) | SEVXError::ActixError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
             SEVXError::NotFound(_msg) => StatusCode::NOT_FOUND,
+            SEVXError::AuthFailed(_msg) => StatusCode::UNAUTHORIZED,
             // SEVXError::InvalidTnput(_msg) => StatusCode::BAD_REQUEST,
         }
     }

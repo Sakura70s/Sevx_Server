@@ -10,26 +10,26 @@ use std::convert::TryFrom;
  */
 pub struct Animation {
     pub id: i32,                    // <- id
-    pub seriesflag: bool,          // <- 系列 Flag  
-    pub seriesid: i16,             // <- 系列ID
+    pub seriesflag: bool,           // <- 系列 Flag  
+    pub seriesid: i16,              // <- 系列ID
     pub animation_name: String,     // <- 名称
     pub animation_year: NaiveDate,  // <- 年份
     pub director: String,           // <- 监督
-    pub screenwriter: String,      // <- 系列构成
+    pub screenwriter: String,       // <- 系列构成
     pub make: String,               // <- 动画制作
     pub logo: String,               // <- 剧照
     pub amount: i16,                // <- 集数
-    pub localflag: bool,           // <- 本地 Flag
-    pub localurl: Option<String>,  // <- 本地 URL      Null
-    pub remoteflag: bool,          // <- 远程 Flag 
-    pub remoteurl: Option<String>, // <- 远程 URL      Null
+    pub localflag: bool,            // <- 本地 Flag
+    pub localurl: Option<String>,   // <- 本地 URL      Null
+    pub remoteflag: bool,           // <- 远程 Flag 
+    pub remoteurl: Option<String>,  // <- 远程 URL      Null
     pub container: String,          // <- 容器格式
     pub codev: String,              // <- 本地视频编码格式
     pub codea: String,              // <- 本地音频编码格式
-    pub subtype: String,           // <- 字幕类型
-    pub subteam: Option<String>,   // <- 字幕组        Null
-    pub lastwatch: NaiveDate,      // <- 最后观看时间
-    pub updatetime: NaiveDate,     // <- 更新时间
+    pub subtype: String,            // <- 字幕类型
+    pub subteam: Option<String>,    // <- 字幕组        Null
+    pub lastwatch: NaiveDate,       // <- 最后观看时间
+    pub updatetime: NaiveDate,      // <- 更新时间
     pub remark: Option<String>,     // <- 备注          Null
 }
 
@@ -39,27 +39,107 @@ pub struct Animation {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddAnimation {
     // pub id: i32,                 // <- id
-    pub seriesflag: bool,          // <- 系列 Flag  
-    pub seriesid: i16,             // <- 系列ID
+    pub seriesflag: bool,           // <- 系列 Flag  
+    pub seriesid: i16,              // <- 系列ID
     pub animation_name: String,     // <- 名称
     pub animation_year: NaiveDate,  // <- 年份
     pub director: String,           // <- 监督
-    pub screenwriter: String,      // <- 系列构成
+    pub screenwriter: String,       // <- 系列构成
     pub make: String,               // <- 动画制作
     pub logo: String,               // <- 剧照
     pub amount: i16,                // <- 集数
-    pub localflag: bool,           // <- 本地 Flag
-    pub localurl: Option<String>,  // <- 本地 URL      Null
-    pub remoteflag: bool,          // <- 远程 Flag 
-    pub remoteurl: Option<String>, // <- 远程 URL      Null
+    pub localflag: bool,            // <- 本地 Flag
+    pub localurl: Option<String>,   // <- 本地 URL      Null
+    pub remoteflag: bool,           // <- 远程 Flag 
+    pub remoteurl: Option<String>,  // <- 远程 URL      Null
     pub container: String,          // <- 容器格式
     pub codev: String,              // <- 本地视频编码格式
     pub codea: String,              // <- 本地音频编码格式
-    pub subtype: String,           // <- 字幕类型
-    pub subteam: Option<String>,   // <- 字幕组        Null
-    pub lastwatch: NaiveDate,      // <- 最后观看时间
+    pub subtype: String,            // <- 字幕类型
+    pub subteam: Option<String>,    // <- 字幕组        Null
+    pub lastwatch: NaiveDate,       // <- 最后观看时间
     // pub update_time: NaiveDate,  // <- 更新时间
     pub remark: Option<String>,     // <- 备注          Null
+}
+
+/**
+ * 动漫更新 结构体
+ */
+#[derive(Deserialize, Debug, Clone)]
+pub struct UpdateAnimation {
+    pub id: i32,                            // <- id
+    pub seriesflag: Option<bool>,           // <- 系列 Flag  
+    pub seriesid: Option<i16>,              // <- 系列ID
+    pub animation_name: Option<String>,     // <- 名称
+    pub animation_year: Option<NaiveDate>,  // <- 年份
+    pub director: Option<String>,           // <- 监督
+    pub screenwriter: Option<String>,       // <- 系列构成
+    pub make: Option<String>,               // <- 动画制作
+    pub logo: Option<String>,               // <- 剧照
+    pub amount: Option<i16>,                // <- 集数
+    pub localflag: Option<bool>,            // <- 本地 Flag
+    pub localurl: Option<String>,           // <- 本地 URL      Null
+    pub remoteflag: Option<bool>,           // <- 远程 Flag 
+    pub remoteurl: Option<String>,          // <- 远程 URL      Null
+    pub container: Option<String>,          // <- 容器格式
+    pub codev: Option<String>,              // <- 本地视频编码格式
+    pub codea: Option<String>,              // <- 本地音频编码格式
+    pub subtype: Option<String>,            // <- 字幕类型
+    pub subteam: Option<String>,            // <- 字幕组        Null
+    pub lastwatch: Option<NaiveDate>,       // <- 最后观看时间
+    // pub update_time: NaiveDate,          // <- 更新时间
+    pub remark: Option<String>,             // <- 备注          Null
+}
+/**
+ * 实现-动漫更新-From
+ */
+impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
+    fn from(animation: web::Json<UpdateAnimation>) -> Self {
+        UpdateAnimation { 
+            id: animation.id,
+            seriesflag: animation.seriesflag.clone(),
+            seriesid: animation.seriesid,
+            animation_name: animation.animation_name.clone(),
+            animation_year: animation.animation_year,
+            director: animation.director.clone(),
+            screenwriter: animation.screenwriter.clone(),
+            make: animation.make.clone(),
+            logo: animation.logo.clone(),
+            amount: animation.amount,
+            localflag: animation.localflag,
+            localurl: animation.localurl.clone(),
+            remoteflag: animation.remoteflag,
+            remoteurl: animation.remoteurl.clone(),
+            container: animation.container.clone(),
+            codev: animation.codev.clone(),
+            codea: animation.codea.clone(),
+            subtype: animation.subtype.clone(),
+            subteam: animation.subteam.clone(),
+            lastwatch: animation.lastwatch,
+            remark: animation.remark.clone(),
+        }
+    }
+}
+
+/**
+ * 动漫删除结构体
+ * 仅当口令验证正确的时候才执行删除
+ */
+#[derive(Deserialize, Debug, Clone)]
+pub struct DeleteAnimation {
+    pub id: i32,                // <- 动漫id
+    pub password: String,       // <- 口令
+}
+/**
+ * 动漫删除 实现
+ */
+impl From<web::Json<DeleteAnimation>> for DeleteAnimation {
+    fn from(animation: web::Json<DeleteAnimation>) -> Self {
+        DeleteAnimation {
+            id: animation.id,
+            password: animation.password.clone(),
+        }
+    }
 }
 
 /**
