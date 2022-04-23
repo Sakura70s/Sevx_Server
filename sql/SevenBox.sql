@@ -86,6 +86,88 @@ CREATE TABLE Animation(
 --  备注
     remark text
 );
+Insert into Animation (
+    seriesFlag,
+    seriesId,
+    Animation_name,
+    Animation_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    'CLANNAD',
+    '2007-10-04',
+    '石原立也',
+    '志茂文彦',
+    'Kyoto Animation',
+    'https://static.7os.top/Image/Sakura.png',
+    '24',
+    True,
+    'Disk::M::/BD/CLANNAD',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '内挂',
+    '澄空学园',
+    ''
+);
+Insert into Animation (
+    seriesFlag,
+    seriesId,
+    Animation_name,
+    Animation_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    'CLANNAD~After Story~',
+    '2008-10-02',
+    '石原立也',
+    '志茂文彦',
+    'Kyoto Animation',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/BD/CLANNAD2',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '内挂',
+    '澄空学园',
+    '这是一个测试备注'
+);
 
 
 ------------------------------------------------------
@@ -134,6 +216,86 @@ CREATE TABLE Film(
     updateTime date NOT NULL Default now(),
 --  备注
     remark text
+);
+
+Insert into Film (
+    seriesFlag,
+    seriesId,
+    Film_name,
+    Film_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    '妇愁者联盟3',
+    '2018-04-27',
+    '安东尼·罗素、乔·罗素',
+    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
+    '漫威影业公司',
+    'https://static.7os.top/Image/Sakura.png',
+    True,
+    'Disk::M::/Film/妇联4',
+    False,
+    '',
+    'mkv',
+    'HEVC',
+    'Flac',
+    '内挂',
+    '不知道',
+    ''
+);
+
+Insert into Film (
+    seriesFlag,
+    seriesId,
+    Film_name,
+    Film_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    '妇愁者联盟4',
+    '2019-04-24',
+    '安东尼·罗素、乔·罗素',
+    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
+    '漫威影业公司',
+    'https://static.7os.top/Image/Sakura.png',
+    True,
+    'Disk::M::/Film/妇联4',
+    False,
+    '',
+    'mkv',
+    'HEVC',
+    'Flac',
+    '内挂',
+    '不知道',
+    ''
 );
 
 
@@ -187,6 +349,90 @@ CREATE TABLE TV(
     remark text
 );
 
+Insert into TV (
+    seriesFlag,
+    seriesId,
+    Tv_name,
+    Tv_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    False,
+    0,
+    '测试 TV',
+    '2018-10-02',
+    '哈哈',
+    '哈哈哈',
+    '哈哈哈哈',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/哈哈',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '无',
+    '哈哈哈哈',
+    '这是一个测试备注'
+);
+
+Insert into TV (
+    seriesFlag,
+    seriesId,
+    Tv_name,
+    Tv_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    False,
+    0,
+    '测试 TV2',
+    '2018-10-02',
+    '哈哈2',
+    '哈哈哈2',
+    '哈哈哈哈2',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/哈哈2',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '无',
+    '哈哈哈哈2',
+    '这是一个测试备注2'
+);
+
 
 ------------------------------------------------------
 --    SV 表
@@ -200,6 +446,8 @@ CREATE TABLE SV(
     SV_year date NOT NULL,
 --  短片类型
     SV_type varchar(10) NOT NULL,
+--  Logo
+    logo text NOT NULL,
 --  作者
     author varchar(20) NOT NULL,
 --  本地标志
@@ -216,8 +464,70 @@ CREATE TABLE SV(
     codev varchar(10) NOT NULL,
 --  音频编码格式
     codea varchar(10) NOT NULL,
+--  更新时间
+    updateTime date NOT NULL Default now(),
 --  备注
     remark text
+);
+
+Insert into SV (
+    Sv_name,
+    Sv_year,
+    SV_type,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    remark
+) Values (
+    '测试SV',
+    '2018-10-02',
+    'AMV',
+    'https://static.7os.top/Image/Sakura.png',
+    'Sakura70s',
+    True,
+    'Disk::M::/哈哈',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '这是一个测试备注'
+);
+
+Insert into SV (
+    Sv_name,
+    Sv_year,
+    SV_type,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    remark
+) Values (
+    '测试SV1',
+    '2018-10-02',
+    'AMV',
+    'https://static.7os.top/Image/Sakura.png',
+    'Sakura70s',
+    True,
+    'Disk::M::/哈哈1',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '这是一个测试备注1'
 );
 
 
@@ -327,274 +637,3 @@ CREATE TABLE Comic(
 --  备注
     remark text
 );
-
-
-------------------------------------------------------------------------------------------------------------------------
---    插入测试数据
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------
---    Animation 表
-------------------------------------------------------
-Insert into Animation (
-    seriesFlag,
-    seriesId,
-    Animation_name,
-    Animation_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    amount,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    True,
-    1,
-    'CLANNAD',
-    '2007-10-04',
-    '石原立也',
-    '志茂文彦',
-    'Kyoto Animation',
-    'https://static.7os.top/Image/Sakura.png',
-    '24',
-    True,
-    'Disk::M::/BD/CLANNAD',
-    False,
-    '',
-    'mkv',
-    'H264',
-    'Flac',
-    '内挂',
-    '澄空学园',
-    ''
-);
-
-
-Insert into Animation (
-    seriesFlag,
-    seriesId,
-    Animation_name,
-    Animation_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    amount,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    True,
-    1,
-    'CLANNAD~After Story~',
-    '2008-10-02',
-    '石原立也',
-    '志茂文彦',
-    'Kyoto Animation',
-    'https://static.7os.top/Image/Sakura.png',
-    '25',
-    True,
-    'Disk::M::/BD/CLANNAD2',
-    False,
-    '',
-    'mkv',
-    'H264',
-    'Flac',
-    '内挂',
-    '澄空学园',
-    '这是一个测试备注'
-);
-
-
-------------------------------------------------------
---    Film 表
-------------------------------------------------------
-Insert into Film (
-    seriesFlag,
-    seriesId,
-    Film_name,
-    Film_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    True,
-    1,
-    '妇愁者联盟3',
-    '2018-04-27',
-    '安东尼·罗素、乔·罗素',
-    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
-    '漫威影业公司',
-    'https://static.7os.top/Image/Sakura.png',
-    True,
-    'Disk::M::/Film/妇联4',
-    False,
-    '',
-    'mkv',
-    'HEVC',
-    'Flac',
-    '内挂',
-    '不知道',
-    ''
-);
-
-Insert into Film (
-    seriesFlag,
-    seriesId,
-    Film_name,
-    Film_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    True,
-    1,
-    '妇愁者联盟4',
-    '2019-04-24',
-    '安东尼·罗素、乔·罗素',
-    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
-    '漫威影业公司',
-    'https://static.7os.top/Image/Sakura.png',
-    True,
-    'Disk::M::/Film/妇联4',
-    False,
-    '',
-    'mkv',
-    'HEVC',
-    'Flac',
-    '内挂',
-    '不知道',
-    ''
-);
-
-
-------------------------------------------------------
---    TV 表
-------------------------------------------------------
-Insert into TV (
-    seriesFlag,
-    seriesId,
-    Tv_name,
-    Tv_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    amount,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    False,
-    0,
-    '测试 TV',
-    '2018-10-02',
-    '哈哈',
-    '哈哈哈',
-    '哈哈哈哈',
-    'https://static.7os.top/Image/Sakura.png',
-    '25',
-    True,
-    'Disk::M::/哈哈',
-    False,
-    '',
-    'mkv',
-    'H264',
-    'Flac',
-    '无',
-    '哈哈哈哈',
-    '这是一个测试备注'
-);
-
-Insert into TV (
-    seriesFlag,
-    seriesId,
-    Tv_name,
-    Tv_year,
-    director,
-    screenWriter,
-    make,
-    logo,
-    amount,
-    localFlag,
-    localUrl,
-    remoteFlag,
-    remoteUrl,
-    container,
-    codev,
-    codea,
-    subType,
-    subTeam,
-    remark
-) Values (
-    False,
-    0,
-    '测试 TV2',
-    '2018-10-02',
-    '哈哈2',
-    '哈哈哈2',
-    '哈哈哈哈2',
-    'https://static.7os.top/Image/Sakura.png',
-    '25',
-    True,
-    'Disk::M::/哈哈2',
-    False,
-    '',
-    'mkv',
-    'H264',
-    'Flac',
-    '无',
-    '哈哈哈哈2',
-    '这是一个测试备注2'
-);
--- SV
-
--- Music
-
--- Novel
-
--- Comic

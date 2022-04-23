@@ -48,8 +48,13 @@ async fn main() -> io::Result<()> {
             .configure(routers::animation_router::animation_routers)
             .configure(routers::film_router::film_routers)
             .configure(routers::tv_router::tv_routers)
+            .configure(routers::sv_router::sv_routers)
     };
 
+    // 设置监听端口
+    let addr = String::from("localhost:3000");
+    println!("服务器正在监听以下地址：{}", addr);
+
     // 程序入口（开始监听）
-    HttpServer::new(app).bind("localhost:3000")?.run().await
+    HttpServer::new(app).bind(addr)?.run().await
 }
