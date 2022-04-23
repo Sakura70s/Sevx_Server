@@ -37,294 +37,304 @@ CREATE TYPE svTypeENUM AS ENUM (
 ------------------------------------------------------------------------------------------------------------------------
 --    创建表
 ------------------------------------------------------------------------------------------------------------------------
--- Animation表
+------------------------------------------------------
+--    Animation 表
+------------------------------------------------------
 CREATE TABLE Animation(
+--  id
     id serial NOT NULL PRIMARY KEY,
+--  系列Flag
     seriesFlag boolean NOT NULL,
+--  系列ID
     seriesId smallint NOT NULL Default 0,
+--  动画名称
     Animation_name varchar(50) NOT NULL,
+--  动画年份
     Animation_year date NOT NULL,
+--  监督
     director varchar(20) NOT NULL,
+--  系列构成
     screenWriter varchar(20) NOT NULL,
+--  动画制作
     make varchar(20) NOT NULL,
+--  封面
     logo text NOT NULL,
+--  集数
     amount smallint NOT NULL,
+--  本地标志
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程标志
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  视频编码格式
     codev varchar(10) NOT NULL,
+--  音频编码格式
     codea varchar(10) NOT NULL,
+--  字幕类型
     subType varchar(10) NOT NULL,
+--  字幕组
     subTeam varchar(20),
+--  最后观看时间
     lastWatch date NOT NULL Default '2012-12-12',
+--  更新时间
     updateTime date NOT NULL Default now(),
+--  备注
     remark text
 );
--- 添加注释
-COMMENT ON column Animation.id is 'id';
-COMMENT ON column Animation.seriesFlag is '系列Flag';
-COMMENT ON column Animation.seriesId is '系列ID';
-COMMENT ON column Animation.Animation_name is '名称';
-COMMENT ON column Animation.Animation_year is '年份';
-COMMENT ON column Animation.director is '监督';
-COMMENT ON column Animation.screenWriter is '系列构成';
-COMMENT ON column Animation.make is '动画制作';
-COMMENT ON column Animation.logo is '剧照';
-COMMENT ON column Animation.amount is '集数';
-COMMENT ON column Animation.localFlag is '本地Flag';
-COMMENT ON column Animation.localUrl is '本地存放位置';
-COMMENT ON column Animation.remoteFlag is '远程Flag';
-COMMENT ON column Animation.remoteUrl is '远程位置';
-COMMENT ON column Animation.container is '容器格式';
-COMMENT ON column Animation.codev is '本地视频编码格式';
-COMMENT ON column Animation.codea is '本地音频编码格式';
-COMMENT ON column Animation.subType is '字幕类型';
-COMMENT ON column Animation.subTeam is '字幕组';
-COMMENT ON column Animation.lastWatch is '最后观看时间';
-COMMENT ON column Animation.updateTime is '更新时间';
-COMMENT ON column Animation.remark is '备注';
 
 
--- Film 表
+------------------------------------------------------
+--    Fiml 表
+------------------------------------------------------
 CREATE TABLE Film(
+--  id
     id serial NOT NULL PRIMARY KEY,
+--  系列Flag
     seriesFlag boolean NOT NULL,
+--  系列ID
     seriesId smallint NOT NULL Default 0,
+--  电影名称
     Film_name varchar(50) NOT NULL,
+--  电影年份
     Film_year date NOT NULL,
-    director varchar(20) NOT NULL,
-    screenWriter varchar(20) NOT NULL,
+--  导演
+    director varchar(50) NOT NULL,
+--  编剧
+    screenWriter varchar(50) NOT NULL,
+--  制作
     make varchar(20) NOT NULL,
+--  封面
     logo text NOT NULL,
+--  本地标志
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程标志
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  视频编码格式
     codev varchar(10) NOT NULL,
+--  音频编码格式
     codea varchar(10) NOT NULL,
+--  字幕类型
     subType varchar(10) NOT NULL,
+--  字幕组
     subTeam varchar(20),
+--  最后观看时间
     lastWatch date NOT NULL Default '2012-12-12',
+--  更新时间
     updateTime date NOT NULL Default now(),
+--  备注
     remark text
 );
--- 添加注释
-COMMENT ON column Film.id is 'id';
-COMMENT ON column Film.seriesFlag is '系列Flag';
-COMMENT ON column Film.seriesId is '系列ID';
-COMMENT ON column Film.Film_name is '名称';
-COMMENT ON column Film.Film_year is '年份';
-COMMENT ON column Film.director is '导演';
-COMMENT ON column Film.screenWriter is '编剧';
-COMMENT ON column Film.make is '出品方';
-COMMENT ON column Film.logo is '剧照';
-COMMENT ON column Film.localFlag is '本地Flag';
-COMMENT ON column Film.localUrl is '本地存放位置';
-COMMENT ON column Film.remoteFlag is '远程Flag';
-COMMENT ON column Film.remoteUrl is '远程位置';
-COMMENT ON column Film.container is '容器格式';
-COMMENT ON column Film.codev is '本地视频编码格式';
-COMMENT ON column Film.codea is '本地音频编码格式';
-COMMENT ON column Film.subType is '字幕类型';
-COMMENT ON column Film.subTeam is '字幕组';
-COMMENT ON column Film.lastWatch is '最后观看时间';
-COMMENT ON column Film.updateTime is '更新时间';
-COMMENT ON column Film.remark is '备注';
 
 
--- TV 表
+------------------------------------------------------
+--    TV 表
+------------------------------------------------------
 CREATE TABLE TV(
+--  id
     id serial NOT NULL PRIMARY KEY,
+--  系列Flag
     seriesFlag boolean NOT NULL,
+--  系列ID
     seriesId smallint NOT NULL Default 0,
-    TV_name varchar(50) NOT NULL,
-    TV_year date NOT NULL,
+--  电视剧 名称
+    Animation_name varchar(50) NOT NULL,
+--  电视剧 年份
+    Animation_year date NOT NULL,
+--  导演
     director varchar(20) NOT NULL,
+--  编剧
     screenWriter varchar(20) NOT NULL,
+--  出品
     make varchar(20) NOT NULL,
+--  封面
     logo text NOT NULL,
+--  集数
     amount smallint NOT NULL,
+--  本地标志
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程标志
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  视频编码格式
     codev varchar(10) NOT NULL,
+--  音频编码格式
     codea varchar(10) NOT NULL,
+--  字幕类型
     subType varchar(10) NOT NULL,
+--  字幕组
     subTeam varchar(20),
+--  最后观看时间
     lastWatch date NOT NULL Default '2012-12-12',
+--  更新时间
     updateTime date NOT NULL Default now(),
+--  备注
     remark text
 );
--- 添加注释
-COMMENT ON column TV.id is 'id';
-COMMENT ON column TV.seriesFlag is '系列Flag';
-COMMENT ON column TV.seriesId is '系列ID';
-COMMENT ON column TV.TV_name is '名称';
-COMMENT ON column TV.TV_year is '年份';
-COMMENT ON column TV.director is '导演';
-COMMENT ON column TV.screenWriter is '编剧';
-COMMENT ON column TV.make is '出品方';
-COMMENT ON column TV.logo is '剧照';
-COMMENT ON column TV.amount is '集数';
-COMMENT ON column TV.localFlag is '本地Flag';
-COMMENT ON column TV.localUrl is '本地存放位置';
-COMMENT ON column TV.remoteFlag is '远程Flag';
-COMMENT ON column TV.remoteUrl is '远程位置';
-COMMENT ON column TV.container is '容器格式';
-COMMENT ON column TV.codev is '本地视频编码格式';
-COMMENT ON column TV.codea is '本地音频编码格式';
-COMMENT ON column TV.subType is '字幕类型';
-COMMENT ON column TV.subTeam is '字幕组';
-COMMENT ON column TV.lastWatch is '最后观看时间';
-COMMENT ON column TV.updateTime is '更新时间';
-COMMENT ON column TV.remark is '备注';
 
 
--- SV表
+------------------------------------------------------
+--    SV 表
+------------------------------------------------------
 CREATE TABLE SV(
+--  ID
     id serial NOT NULL PRIMARY KEY,
+--  短片 名称
     SV_name varchar(50) NOT NULL,
+--  短片 年份
     SV_year date NOT NULL,
-    author varchar(20) NOT NULL,
+--  短片类型
     SV_type varchar(10) NOT NULL,
+--  作者
+    author varchar(20) NOT NULL,
+--  本地标志
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程标志
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  视频编码格式
     codev varchar(10) NOT NULL,
+--  音频编码格式
     codea varchar(10) NOT NULL,
+--  备注
     remark text
 );
--- 添加注释
-COMMENT ON column SV.id is 'ID';
-COMMENT ON column SV.SV_name is '名称';
-COMMENT ON column SV.SV_year is '年份';
-COMMENT ON column SV.author is '作者';
-COMMENT ON column SV.SV_type is '类型';
-COMMENT ON column SV.localFlag is '本地Flag';
-COMMENT ON column SV.localUrl is '本地位置';
-COMMENT ON column SV.remoteFlag is '远程Flag';
-COMMENT ON column SV.remoteUrl is '远程位置';
-COMMENT ON column SV.container is '容器格式';
-COMMENT ON column SV.codev is '本地视频编码格式';
-COMMENT ON column SV.codea is '本地音频编码格式';
-COMMENT ON column SV.remark is '备注';
 
 
--- Music表
+------------------------------------------------------
+--    Music 表
+------------------------------------------------------
 CREATE TABLE Music(
+--  ID
     id serial NOT NULL PRIMARY KEY,
+--  音乐 名称
     Music_name varchar(50) NOT NULL,
-    logo text NOT NULL,
-    aritst varchar(20) NOT NULL,
-    album varchar(20) NOT NULL,
+--  音乐 年份
     Music_year date NOT NULL,
+--  专辑封面
+    logo text NOT NULL,
+--  艺术家
+    aritst varchar(20) NOT NULL,
+--  专辑
+    album varchar(20) NOT NULL,
+--  作词
     lyrics varchar(20) NOT NULL,
+--  作曲
     written varchar(20) NOT NULL,
+--  本地Flag
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程Flag
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  歌词类型
     lyricType varchar(10) NOT NULL,
+--  备注
     remark text
 );
--- 添加注释
-COMMENT ON column Music.id is 'ID';
-COMMENT ON column Music.Music_name is '名称';
-COMMENT ON column Music.logo is '专辑封面';
-COMMENT ON column Music.aritst is '艺术家';
-COMMENT ON column Music.album is '专辑';
-COMMENT ON column Music.Music_year is '年份';
-COMMENT ON column Music.lyrics is '作词';
-COMMENT ON column Music.written is '作曲';
-COMMENT ON column Music.localFlag is '本地Flag';
-COMMENT ON column Music.localUrl is '本地位置';
-COMMENT ON column Music.remoteFlag is '远程Flag';
-COMMENT ON column Music.remoteUrl is '远程位置';
-COMMENT ON column Music.container is '容器格式';
-COMMENT ON column Music.lyricType is '歌词类型';
-COMMENT ON column Music.remark is '备注';
 
 
--- Novel 表
+------------------------------------------------------
+--    Novel 表
+------------------------------------------------------
 CREATE TABLE Novel(
+--  ID
     id serial NOT NULL PRIMARY KEY,
+--  系列Flag
     seriesFlag boolean NOT NULL,
-    seriesId smallint Default 0,
-    Novel_name varchar(50) NOT NULL,
-    Novel_year date NOT NULL,
-    logo text NOT NULL,
-    author varchar(20) NOT NULL,
-    Novelstatus varchar(20) NOT NULL,
-    localFlag boolean NOT NULL,
-    localUrl varchar(50),
-    remoteFlag boolean NOT NULL,
-    remoteUrl text,
-    container varchar(10) NOT NULL,
-    remark text
-);
--- 添加注释
-COMMENT ON column Novel.id is 'ID';
-COMMENT ON column Novel.seriesFlag is '系列Flag';
-COMMENT ON column Novel.seriesId is '系列ID';
-COMMENT ON column Novel.Novel_name is '名称';
-COMMENT ON column Novel.Novel_year is '年份';
-COMMENT ON column Novel.logo is '封面';
-COMMENT ON column Novel.author is '作者';
-COMMENT ON column Novel.Novel_status is '连载状态';
-COMMENT ON column Novel.localFlag is '本地Flag';
-COMMENT ON column Novel.localUrl is '本地位置';
-COMMENT ON column Novel.remoteFlag is '远程Flag';
-COMMENT ON column Novel.remoteUrl is '远程位置';
-COMMENT ON column Novel.container is '容器格式';
-COMMENT ON column Novel.remark is '备注';
-
-
--- Comic 表
-CREATE TABLE Comic(
-    id serial NOT NULL PRIMARY KEY,
-    seriesFlag boolean NOT NULL,
+--  系列ID
     seriesId smallint NOT NULL Default 0,
-    Comic_name varchar(50) NOT NULL,
-    Comic_year date NOT NULL,
+--  小说 名称
+    Novel_name varchar(50) NOT NULL,
+--  小说 年份
+    Novel_year date NOT NULL,
+--  封面
     logo text NOT NULL,
+--  作者
     author varchar(20) NOT NULL,
-    Comicstatus varchar(20) NOT NULL,
+--  连载状态
+    Novel_status varchar(20) NOT NULL,
+--  本地标志
     localFlag boolean NOT NULL,
+--  本地URL
     localUrl varchar(50),
+--  远程标志
     remoteFlag boolean NOT NULL,
+--  远程URL
     remoteUrl text,
+--  容器格式
     container varchar(10) NOT NULL,
+--  备注
     remark text
 );
 -- 添加注释
-COMMENT ON column Comic.id is 'ID';
-COMMENT ON column Comic.seriesFlag is '系列Flag';
-COMMENT ON column Comic.seriesId is '系列ID';
-COMMENT ON column Comic.Comic_name is '名称';
-COMMENT ON column Comic.Comic_year is '年份';
-COMMENT ON column Comic.logo is '封面';
-COMMENT ON column Comic.author is '作者';
-COMMENT ON column Comic.Comic_status is '连载状态';
-COMMENT ON column Comic.localFlag is '本地Flag';
-COMMENT ON column Comic.localUrl is '本地位置';
-COMMENT ON column Comic.remoteFlag is '远程Flag';
-COMMENT ON column Comic.remoteUrl is '远程位置';
-COMMENT ON column Comic.container is '容器格式';
-COMMENT ON column Comic.remark is '备注';
+
+
+------------------------------------------------------
+--    Comic 表
+------------------------------------------------------
+CREATE TABLE Comic(
+--  id
+    id serial NOT NULL PRIMARY KEY,
+--  系列Flag
+    seriesFlag boolean NOT NULL,
+--  系列ID
+    seriesId smallint NOT NULL Default 0,
+--  漫画 名称
+    Comic_name varchar(50) NOT NULL,
+--  漫画 年份
+    Comic_year date NOT NULL,
+--  封面
+    logo text NOT NULL,
+--  作者
+    author varchar(20) NOT NULL,
+--  连载状态
+    Comic_status varchar(20) NOT NULL,
+--  本地标志
+    localFlag boolean NOT NULL,
+--  本地URL
+    localUrl varchar(50),
+--  远程标志
+    remoteFlag boolean NOT NULL,
+--  远程URL
+    remoteUrl text,
+--  容器格式
+    container varchar(10) NOT NULL,
+--  备注
+    remark text
+);
 
 
 ------------------------------------------------------------------------------------------------------------------------
 --    插入测试数据
 ------------------------------------------------------------------------------------------------------------------------
--- Animation
+------------------------------------------------------
+--    Animation 表
+------------------------------------------------------
 Insert into Animation (
     seriesFlag,
     seriesId,
@@ -409,7 +419,91 @@ Insert into Animation (
     '澄空学园',
     '这是一个测试备注'
 );
--- Film
+
+
+------------------------------------------------------
+--    Animation 表
+------------------------------------------------------
+Insert into Film (
+    seriesFlag,
+    seriesId,
+    Film_name,
+    Film_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    '妇愁者联盟3',
+    '2018-04-27',
+    '安东尼·罗素、乔·罗素',
+    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
+    '漫威影业公司',
+    'https://static.7os.top/Image/Sakura.png',
+    True,
+    'Disk::M::/Film/妇联4',
+    False,
+    '',
+    'mkv',
+    'HEVC',
+    'Flac',
+    '内挂',
+    '不知道',
+    ''
+);
+
+Insert into Film (
+    seriesFlag,
+    seriesId,
+    Film_name,
+    Film_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    True,
+    1,
+    '妇愁者联盟4',
+    '2019-04-24',
+    '安东尼·罗素、乔·罗素',
+    '杰克·科比、克里斯托弗·马库斯、斯蒂芬·麦克菲利、斯坦·李',
+    '漫威影业公司',
+    'https://static.7os.top/Image/Sakura.png',
+    True,
+    'Disk::M::/Film/妇联4',
+    False,
+    '',
+    'mkv',
+    'HEVC',
+    'Flac',
+    '内挂',
+    '不知道',
+    ''
+);
+
 
 -- TV
 

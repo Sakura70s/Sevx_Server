@@ -4,7 +4,7 @@ use crate::db_access::animation_db::*;
 use crate::models::animation_model::*;
 
 /**
- * 获取所有动画
+ * 获取所有 Animation
  */
 pub async fn get_all_animation(
     app_state: web::Data<AppState>
@@ -15,7 +15,7 @@ pub async fn get_all_animation(
 }
 
 /**
- * 根据 Id 获取具体动画
+ * 根据 Id 获取具体 Animation
  */
 pub async fn get_animation_for_id (
     app_state: web::Data<AppState>,
@@ -30,7 +30,7 @@ pub async fn get_animation_for_id (
 }
 
 /**
- * 动画名称 查询
+ * Animation 名称 查询
  */
 pub async fn search_animation_for_name (
     app_state: web::Data<AppState>,
@@ -45,7 +45,7 @@ pub async fn search_animation_for_name (
 }
 
 /**
- * 添加动画
+ * 添加 Animation
  */
 pub async fn add_animation (
     new_animation: web::Json<AddAnimation>,
@@ -56,7 +56,7 @@ pub async fn add_animation (
 }
 
 /**
- * 更新动画
+ * 更新 Animation
  */
 pub async fn update_animation (
     app_state: web::Data<AppState>,
@@ -68,7 +68,7 @@ pub async fn update_animation (
 }
 
 /**
- * 删除动画
+ * 删除 Animation
  */
 pub async fn delete_animation (
     app_state: web::Data<AppState>,

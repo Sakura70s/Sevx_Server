@@ -4,8 +4,9 @@ use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
 use crate::log::print_log;
 
+
 /**
- * 获取所有动漫列表
+ * 获取所有 Animation 列表
  * 成功应返回 Vec<Animation>，错误应返回SEVXError
  */
 pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXError>{
@@ -50,8 +51,9 @@ pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXE
     }
 }
 
+
 /**
- * 根据单一 ID 获取具体 动漫
+ * 根据单一 ID 获取具体 Animation
  * 成功返回 Animation，失败还不清楚
  */
 pub async fn get_animation_for_id_db (
@@ -75,6 +77,7 @@ pub async fn get_animation_for_id_db (
         _ => Err(SEVXError::NotFound(format!("Animaton of id = {} is not found!", id)))
     }
 }
+
 
 /**
  * 根据名称查询
@@ -122,8 +125,9 @@ pub async fn search_animation_for_name_db (
     }
 }
 
+
 /**
- * 添加动漫
+ * 添加 Animation
  */
 pub async fn add_animation_db (
     pool: &PgPool,
@@ -205,8 +209,9 @@ pub async fn add_animation_db (
     Ok(row)
 }
 
+
 /**
- * 更新动漫
+ * 更新 Animation
  */
 pub async fn update_animation_db (
     pool: &PgPool,
@@ -349,8 +354,9 @@ pub async fn update_animation_db (
     }
 }
 
+
 /**
- * 删除动漫 DB
+ * 删除 Animation DB
  */
 pub async fn delete_animation_db (
     pool: &PgPool,
@@ -360,7 +366,7 @@ pub async fn delete_animation_db (
     // 首先判断口令是否正确
     if delete_animation.password.eq("114514") {
         
-        // 判断当前动漫是否存在
+        // 判断当前 Animation 是否存在
         let current_row = sqlx::query_as!(
             Animation,
             "Select * From Animation where id = $1",

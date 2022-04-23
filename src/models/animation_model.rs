@@ -4,10 +4,10 @@ use serde::{Serialize, Deserialize};
 use crate::error::SEVXError;
 use std::convert::TryFrom;
 
-#[derive(Serialize, Debug, Clone, sqlx::FromRow)]
 /**
  * Animation 结构体
  */
+#[derive(Serialize, Debug, Clone, sqlx::FromRow)]
 pub struct Animation {
     pub id: i32,                    // <- id
     pub seriesflag: bool,           // <- 系列 Flag  
@@ -33,8 +33,9 @@ pub struct Animation {
     pub remark: Option<String>,     // <- 备注          Null
 }
 
+
 /**
- * 动漫添加结构体
+ * Animation 添加结构体
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddAnimation {
@@ -61,9 +62,42 @@ pub struct AddAnimation {
     // pub update_time: NaiveDate,  // <- 更新时间
     pub remark: Option<String>,     // <- 备注          Null
 }
+/**
+ * Animation 添加 实现
+ */
+impl TryFrom<web::Json<AddAnimation>> for AddAnimation {
+    type Error = SEVXError;
+    fn try_from(add_animation: web::Json<AddAnimation>) -> Result<Self, Self::Error> {
+        Ok(AddAnimation {
+            // id: add_animation.id,
+            seriesflag: add_animation.seriesflag,
+            seriesid: add_animation.seriesid,
+            animation_name: add_animation.animation_name.clone(),
+            animation_year: add_animation.animation_year,
+            director: add_animation.director.clone(),
+            screenwriter: add_animation.screenwriter.clone(),
+            make: add_animation.make.clone(),
+            logo: add_animation.logo.clone(),
+            amount: add_animation.amount,
+            localflag: add_animation.localflag,
+            localurl: add_animation.localurl.clone(),
+            remoteflag: add_animation.remoteflag,
+            remoteurl: add_animation.remoteurl.clone(),
+            container: add_animation.container.clone(),
+            codev: add_animation.codev.clone(),
+            codea: add_animation.codea.clone(),
+            subtype: add_animation.subtype.clone(),
+            subteam: add_animation.subteam.clone(),
+            lastwatch: add_animation.lastwatch,
+            // update_time: NaiveDate::from(add_animation.updatetime),
+            remark: add_animation.remark.clone(),
+        })
+    }
+}
+
 
 /**
- * 动漫更新 结构体
+ * Animation 更新 结构体
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateAnimation {
@@ -91,7 +125,7 @@ pub struct UpdateAnimation {
     pub remark: Option<String>,             // <- 备注          Null
 }
 /**
- * 实现-动漫更新-From
+ * 实现-Animation 更新-From
  */
 impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
     fn from(animation: web::Json<UpdateAnimation>) -> Self {
@@ -121,17 +155,18 @@ impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
     }
 }
 
+
 /**
- * 动漫删除结构体
+ * Animation 删除结构体
  * 仅当口令验证正确的时候才执行删除
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteAnimation {
-    pub id: i32,                // <- 动漫id
+    pub id: i32,                // <- Animation id
     pub password: String,       // <- 口令
 }
 /**
- * 动漫删除 实现
+ * Animation 删除 实现
  */
 impl From<web::Json<DeleteAnimation>> for DeleteAnimation {
     fn from(animation: web::Json<DeleteAnimation>) -> Self {
@@ -139,38 +174,5 @@ impl From<web::Json<DeleteAnimation>> for DeleteAnimation {
             id: animation.id,
             password: animation.password.clone(),
         }
-    }
-}
-
-/**
- * 动漫添加 实现
- */
-impl TryFrom<web::Json<AddAnimation>> for AddAnimation {
-    type Error = SEVXError;
-    fn try_from(add_animation: web::Json<AddAnimation>) -> Result<Self, Self::Error> {
-        Ok(AddAnimation {
-            // id: add_animation.id,
-            seriesflag: add_animation.seriesflag,
-            seriesid: add_animation.seriesid,
-            animation_name: add_animation.animation_name.clone(),
-            animation_year: add_animation.animation_year,
-            director: add_animation.director.clone(),
-            screenwriter: add_animation.screenwriter.clone(),
-            make: add_animation.make.clone(),
-            logo: add_animation.logo.clone(),
-            amount: add_animation.amount,
-            localflag: add_animation.localflag,
-            localurl: add_animation.localurl.clone(),
-            remoteflag: add_animation.remoteflag,
-            remoteurl: add_animation.remoteurl.clone(),
-            container: add_animation.container.clone(),
-            codev: add_animation.codev.clone(),
-            codea: add_animation.codea.clone(),
-            subtype: add_animation.subtype.clone(),
-            subteam: add_animation.subteam.clone(),
-            lastwatch: add_animation.lastwatch,
-            // update_time: NaiveDate::from(add_animation.updatetime),
-            remark: add_animation.remark.clone(),
-        })
     }
 }
