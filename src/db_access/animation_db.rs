@@ -11,7 +11,7 @@ use crate::log::print_log;
  */
 pub async fn get_all_animation_db(pool: &PgPool) -> Result<Vec<Animation>, SEVXError>{
     let rows = sqlx::query!(
-        "Select * from Animation"
+        "Select * from Animation Order By id ASC"
     )
     .fetch_all(pool)
     .await?;
@@ -86,7 +86,7 @@ pub async fn search_animation_for_name_db (
     pool: &PgPool,
     name: String,
 ) -> Result<Vec<Animation>, SEVXError> {
-    let rows = sqlx::query!("Select * from Animation where animation_name = $1", name)
+    let rows = sqlx::query!("Select * from Animation where animation_name = $1 Order By id ASC", name)
     .fetch_all(pool)
     .await?;
 
@@ -205,7 +205,7 @@ pub async fn add_animation_db (
     .await?;
 
     // 成功之后打印 Log， 返回新增加的
-    print_log(format!("Add Animation of name:{}", add_animation.animation_name));
+    print_log(format!("Add Animation of name:[{}]", add_animation.animation_name));
     Ok(row)
 }
 

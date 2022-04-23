@@ -47,6 +47,7 @@ async fn main() -> io::Result<()> {
             .app_data(shared_data.clone())
             .configure(routers::animation_router::animation_routers)
             .configure(routers::film_router::film_routers)
+            .configure(routers::tv_router::tv_routers)
     };
 
     // 程序入口（开始监听）

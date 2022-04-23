@@ -200,7 +200,7 @@ pub async fn add_film_db (
     .await?;
 
     // 成功之后打印 Log， 返回新增加的
-    print_log(format!("Add Film of name:{}", add_film.film_name));
+    print_log(format!("Add Film of name:[{}]", add_film.film_name));
     Ok(row)
 }
 

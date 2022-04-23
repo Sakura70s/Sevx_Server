@@ -76,5 +76,5 @@ pub async fn delete_film (
 ) -> Result<HttpResponse, SEVXError> {
     delete_film_db(&app_state.db, delete_film.into())
     .await
-    .map(|film| HttpResponse::Ok().json(film))
+    .map(|film| HttpResponse::Ok().body(film))
 }

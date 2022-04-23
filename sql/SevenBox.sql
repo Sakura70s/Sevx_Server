@@ -148,9 +148,9 @@ CREATE TABLE TV(
 --  系列ID
     seriesId smallint NOT NULL Default 0,
 --  电视剧 名称
-    Animation_name varchar(50) NOT NULL,
+    Tv_name varchar(50) NOT NULL,
 --  电视剧 年份
-    Animation_year date NOT NULL,
+    Tv_year date NOT NULL,
 --  导演
     director varchar(20) NOT NULL,
 --  编剧
@@ -422,7 +422,7 @@ Insert into Animation (
 
 
 ------------------------------------------------------
---    Animation 表
+--    Film 表
 ------------------------------------------------------
 Insert into Film (
     seriesFlag,
@@ -505,8 +505,92 @@ Insert into Film (
 );
 
 
--- TV
+------------------------------------------------------
+--    TV 表
+------------------------------------------------------
+Insert into TV (
+    seriesFlag,
+    seriesId,
+    Tv_name,
+    Tv_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    False,
+    0,
+    '测试 TV',
+    '2018-10-02',
+    '哈哈',
+    '哈哈哈',
+    '哈哈哈哈',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/哈哈',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '无',
+    '哈哈哈哈',
+    '这是一个测试备注'
+);
 
+Insert into TV (
+    seriesFlag,
+    seriesId,
+    Tv_name,
+    Tv_year,
+    director,
+    screenWriter,
+    make,
+    logo,
+    amount,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    codev,
+    codea,
+    subType,
+    subTeam,
+    remark
+) Values (
+    False,
+    0,
+    '测试 TV2',
+    '2018-10-02',
+    '哈哈2',
+    '哈哈哈2',
+    '哈哈哈哈2',
+    'https://static.7os.top/Image/Sakura.png',
+    '25',
+    True,
+    'Disk::M::/哈哈2',
+    False,
+    '',
+    'mkv',
+    'H264',
+    'Flac',
+    '无',
+    '哈哈哈哈2',
+    '这是一个测试备注2'
+);
 -- SV
 
 -- Music

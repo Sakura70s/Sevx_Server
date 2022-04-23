@@ -76,5 +76,5 @@ pub async fn delete_animation (
 ) -> Result<HttpResponse, SEVXError> {
     delete_animation_db(&app_state.db, delete_animation.into())
     .await
-    .map(|animation| HttpResponse::Ok().json(animation))
+    .map(|animation| HttpResponse::Ok().body(animation))
 }
