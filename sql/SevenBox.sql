@@ -544,7 +544,7 @@ CREATE TABLE Music(
 --  专辑封面
     logo text NOT NULL,
 --  艺术家
-    aritst varchar(20) NOT NULL,
+    artist varchar(20) NOT NULL,
 --  专辑
     album varchar(20) NOT NULL,
 --  作词
@@ -563,8 +563,74 @@ CREATE TABLE Music(
     container varchar(10) NOT NULL,
 --  歌词类型
     lyricType varchar(10) NOT NULL,
+--  更新时间
+    updateTime date NOT NULL Default now(),
 --  备注
     remark text
+);
+
+Insert into Music(
+    Music_name,
+    Music_year,
+    logo,
+    artist,
+    album,
+    lyrics,
+    written,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    lyricType,
+    remark
+) Values (
+    '稻香',
+    '2008-10-15',
+    'https://static.7os.top/Image/Sakura.png',
+    '周杰伦',
+    '魔杰座',
+    '周杰伦',
+    '周杰伦',
+    True,
+    'C::Music::',
+    True,
+    'https://cloud.7os.top/Music/稻香.flac',
+    'Flac',
+    '内挂',
+    '无'
+);
+
+Insert into Music(
+    Music_name,
+    Music_year,
+    logo,
+    artist,
+    album,
+    lyrics,
+    written,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    lyricType,
+    remark
+) Values (
+    '稻香1',
+    '2008-10-15',
+    'https://static.7os.top/Image/Sakura.png',
+    '周杰伦',
+    '魔杰座',
+    '周杰伦',
+    '周杰伦',
+    True,
+    'C::Music::',
+    True,
+    'https://cloud.7os.top/Music/稻香.flac',
+    'Flac',
+    '内挂',
+    '111111111'
 );
 
 
@@ -582,12 +648,12 @@ CREATE TABLE Novel(
     Novel_name varchar(50) NOT NULL,
 --  小说 年份
     Novel_year date NOT NULL,
+--  连载状态
+    Novel_status varchar(20) NOT NULL,
 --  封面
     logo text NOT NULL,
 --  作者
     author varchar(20) NOT NULL,
---  连载状态
-    Novel_status varchar(20) NOT NULL,
 --  本地标志
     localFlag boolean NOT NULL,
 --  本地URL
@@ -598,11 +664,71 @@ CREATE TABLE Novel(
     remoteUrl text,
 --  容器格式
     container varchar(10) NOT NULL,
+--  更新时间
+    updateTime date NOT NULL Default now(),
 --  备注
     remark text
 );
--- 添加注释
 
+Insert into Novel(
+    seriesFlag,
+    seriesId,
+    Novel_name,
+    Novel_year,
+    Novel_status,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    remark
+) Values (
+    False,
+    0,
+    'Test Novel',
+    '2000-01-01',
+    '连载',
+    'Https://static.7os.top/Image/Sakura.png',
+    'Sakura70s',
+    False,
+    '',
+    False,
+    '',
+    'Epub',
+    'Mark'
+);
+
+Insert into Novel(
+    seriesFlag,
+    seriesId,
+    Novel_name,
+    Novel_year,
+    Novel_status,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    remark
+) Values (
+    False,
+    0,
+    'Test Novel1',
+    '2000-01-01',
+    '连载',
+    'Https://static.7os.top/Image/Sakura.png',
+    'Sakura70s',
+    False,
+    '',
+    False,
+    '',
+    'Epub',
+    'Mark1'
+);
 
 ------------------------------------------------------
 --    Comic 表
@@ -618,12 +744,12 @@ CREATE TABLE Comic(
     Comic_name varchar(50) NOT NULL,
 --  漫画 年份
     Comic_year date NOT NULL,
+--  连载状态
+    Comic_status varchar(20) NOT NULL,
 --  封面
     logo text NOT NULL,
 --  作者
     author varchar(20) NOT NULL,
---  连载状态
-    Comic_status varchar(20) NOT NULL,
 --  本地标志
     localFlag boolean NOT NULL,
 --  本地URL
@@ -634,6 +760,68 @@ CREATE TABLE Comic(
     remoteUrl text,
 --  容器格式
     container varchar(10) NOT NULL,
+--  更新时间
+    updateTime date NOT NULL Default now(),
 --  备注
     remark text
+);
+
+Insert into Comic(
+    seriesFlag,
+    seriesId,
+    Comic_name,
+    Comic_year,
+    Comic_status,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    remark
+) Values (
+    False,
+    0,
+    '我是娇小魅魔的忠实仆人',
+    '2018-01-01',
+    '完结',
+    'Https://static.7os.top/Image/Sakura.png',
+    '毛玉牛乳',
+    False,
+    '',
+    False,
+    '',
+    'Zip',
+    '测试备注1'
+);
+
+Insert into Comic(
+    seriesFlag,
+    seriesId,
+    Comic_name,
+    Comic_year,
+    Comic_status,
+    logo,
+    author,
+    localFlag,
+    localUrl,
+    remoteFlag,
+    remoteUrl,
+    container,
+    remark
+) Values (
+    False,
+    0,
+    '我是娇小魅魔的忠实仆人1',
+    '2018-01-01',
+    '完结',
+    'Https://static.7os.top/Image/Sakura.png',
+    '毛玉牛乳',
+    False,
+    '',
+    False,
+    '',
+    'Zip',
+    '测试备注2'
 );

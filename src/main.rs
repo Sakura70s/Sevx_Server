@@ -21,7 +21,7 @@ mod error;
 #[path = "./log.rs"]
 mod log;
 
-// 定义为 Actix的入口
+// 定义为 Actix 的入口
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
 
@@ -49,11 +49,15 @@ async fn main() -> io::Result<()> {
             .configure(routers::film_router::film_routers)
             .configure(routers::tv_router::tv_routers)
             .configure(routers::sv_router::sv_routers)
+            .configure(routers::music_router::music_routers)
+            .configure(routers::novel_router::novel_routers)
+            .configure(routers::comic_router::comic_routers)
     };
 
     // 设置监听端口
     let addr = String::from("localhost:3000");
-    println!("服务器正在监听以下地址：{}", addr);
+    println!("年少不知萝莉好，\n只把及笄当块宝。\n如猫般柔软可爱，\n如恶魔狡猾诱人，\n精灵般美丽自然，\n天使般纯真圣洁，\n所以吾之故求也；\n\n吾之独醉萝莉之美，\n豆蔻年华吾之所求。\n\n");
+    println!("当前服务器正在监听以下端口：{}", addr);
 
     // 程序入口（开始监听）
     HttpServer::new(app).bind(addr)?.run().await
