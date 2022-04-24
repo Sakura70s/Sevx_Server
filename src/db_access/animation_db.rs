@@ -347,7 +347,7 @@ pub async fn update_animation_db (
     // 判断是否修改成功
     match animation_row {
         Ok(animation_row) => {
-            print_log(format!("Update Animation of id:{}", update_animation.id));
+            print_log(format!("Update Animation of id:{}, new name:[{}]", update_animation.id, animation_name));
             Ok(animation_row)
         },
         Err(_animation_row) => Err(SEVXError::DBError("Update Failed".into())),

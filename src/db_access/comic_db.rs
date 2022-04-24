@@ -315,7 +315,7 @@ pub async fn update_comic_db (
     // 判断是否修改成功
     match comic_row {
         Ok(comic_row) => {
-            print_log(format!("Update Comic of id:{}", update_comic.id));
+            print_log(format!("Update Comic of id:{}, name:[{}]", update_comic.id, comic_name));
             Ok(comic_row)
         },
         Err(_comic_row) => Err(SEVXError::DBError("Update Failed".into())),

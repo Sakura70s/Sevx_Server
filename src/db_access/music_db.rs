@@ -327,7 +327,7 @@ pub async fn update_music_db (
     // 判断是否修改成功
     match music_row {
         Ok(music_row) => {
-            print_log(format!("Update Music of id:{}", update_music.id));
+            print_log(format!("Update Music of id:{}, name:[{}]", update_music.id, music_name));
             Ok(music_row)
         },
         Err(_music_row) => Err(SEVXError::DBError("Update Failed".into())),

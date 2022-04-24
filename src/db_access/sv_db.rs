@@ -314,7 +314,7 @@ pub async fn update_sv_db (
     // 判断是否修改成功
     match sv_row {
         Ok(sv_row) => {
-            print_log(format!("Update Sv of id:{}", update_sv.id));
+            print_log(format!("Update Sv of id:{}, name:[{}]", update_sv.id, sv_name));
             Ok(sv_row)
         },
         Err(_sv_row) => Err(SEVXError::DBError("Update Failed".into())),

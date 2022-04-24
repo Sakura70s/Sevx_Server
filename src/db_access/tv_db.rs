@@ -347,7 +347,7 @@ pub async fn update_tv_db (
     // 判断是否修改成功
     match tv_row {
         Ok(tv_row) => {
-            print_log(format!("Update Tv of id:{}", update_tv.id));
+            print_log(format!("Update Tv of id:{}, name:[{}]", update_tv.id, tv_name));
             Ok(tv_row)
         },
         Err(_tv_row) => Err(SEVXError::DBError("Update Failed".into())),

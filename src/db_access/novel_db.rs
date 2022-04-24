@@ -315,7 +315,7 @@ pub async fn update_novel_db (
     // 判断是否修改成功
     match novel_row {
         Ok(novel_row) => {
-            print_log(format!("Update Novel of id:{}", update_novel.id));
+            print_log(format!("Update Novel of id:{}, name:[{}]", update_novel.id, novel_name));
             Ok(novel_row)
         },
         Err(_novel_row) => Err(SEVXError::DBError("Update Failed".into())),

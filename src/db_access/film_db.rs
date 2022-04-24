@@ -338,7 +338,7 @@ pub async fn update_film_db (
     // 判断是否修改成功
     match film_row {
         Ok(film_row) => {
-            print_log(format!("Update Film of id:{}", update_film.id));
+            print_log(format!("Update Film of id:{}, name:[{}]", update_film.id, film_name));
             Ok(film_row)
         },
         Err(_film_row) => Err(SEVXError::DBError("Update Failed".into())),
