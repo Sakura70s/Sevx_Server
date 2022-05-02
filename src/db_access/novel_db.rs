@@ -2,6 +2,7 @@ use crate::models::novel_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
+use crate::db_access::auth_db::*;
 use crate::log::print_log;
 
 
@@ -330,37 +331,36 @@ pub async fn delete_novel_db (
     pool: &PgPool,
     delete_novel: DeleteNovel,
 ) -> Result<String, SEVXError> {
+    // 先进行身份验证
+    let auth = get_auth_db(&pool, delete_novel.name.clone(), delete_novel.password.clone()).await;
+    match auth {
+        Ok(_) => {
+            // 判断当前 Novel 是否存在
+            let current_row = sqlx::query_as!(
+                Novel,
+                "Select * From Novel where id = $1",
+                delete_novel.id
+            )
+            .fetch_optional(pool).await?;
+            match current_row {
 
-    // 首先判断口令是否正确
-    if delete_novel.password.eq("114514") {
-        
-        // 判断当前 Novel 是否存在
-        let current_row = sqlx::query_as!(
-            Novel,
-            "Select * From Novel where id = $1",
-            delete_novel.id
-        )
-        .fetch_optional(pool).await?;
-        match current_row {
+                // 存在则执行删除
+                Some(_current_row) => {
+                    let _row = sqlx::query!(
+                        "Delete From Novel where id = $1",
+                        delete_novel.id
+                    )
+                    .execute(pool)
+                    .await?;
+                    print_log(format!("Delete Novel of id:{}", delete_novel.id));
+                    Ok(format!("Delete Novel of id:{}", delete_novel.id))
+                },
 
-            // 存在则执行删除
-            Some(_current_row) => {
-                let _row = sqlx::query!(
-                    "Delete From novel where id = $1",
-                    delete_novel.id
-                )
-                .execute(pool)
-                .await?;
-                print_log(format!("Delete Novel of id:{}", delete_novel.id));
-                Ok(format!("Delete Novel of id:{}", delete_novel.id))
-            },
-
-            // 不存在返回错误
-            _ => Err(SEVXError::NotFound(format!("Novel of id:{} is not found", delete_novel.id)))
+                // 不存在返回错误
+                _ => Err(SEVXError::NotFound(format!("Novel of id:{} is not found", delete_novel.id)))
+            }
         }
-    
-    // 口令不正确提示认证错误
-    } else {
-        Err(SEVXError::AuthFailed("Password Error".into()))
+
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for delete Novel", delete_novel.name)))
     }
 }

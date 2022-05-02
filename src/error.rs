@@ -33,25 +33,25 @@ impl SEVXError {
             SEVXError::DBError(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
-                println!("{}  Database Error:{:?}",now, msg);
+                println!("{}  Database Error: {:?}",now, msg);
                 "Database Error".into()
             },
             SEVXError::ActixError(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
-                println!("{}  Actix Error:{:?}",now, msg);
+                println!("{}  Actix Error: {:?}",now, msg);
                 "Actix Error".into()
             },
             SEVXError::NotFound(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
-                println!("{}  Not Found:{:?}",now, msg);
+                println!("{}  Not Found: {:?}",now, msg);
                 "Not Found".into()
             },
             SEVXError::AuthFailed(msg) => {
                 let fmt = "%Y-%m-%d %H:%M:%S";
                 let now = Local::now().format(fmt);
-                println!("{}  Auth Failed:{:?}",now, msg);
+                println!("{}  Auth Failed: {:?}",now, msg);
                 "Auth Failed".into()
             },
             // SEVXError::InvalidTnput(msg) => {

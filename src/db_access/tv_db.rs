@@ -2,6 +2,7 @@ use crate::models::tv_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
+use crate::db_access::auth_db::*;
 use crate::log::print_log;
 
 
@@ -362,37 +363,36 @@ pub async fn delete_tv_db (
     pool: &PgPool,
     delete_tv: DeleteTv,
 ) -> Result<String, SEVXError> {
+    // 先进行身份验证
+    let auth = get_auth_db(&pool, delete_tv.name.clone(), delete_tv.password.clone()).await;
+    match auth {
+        Ok(_) => {
+            // 判断当前 Tv 是否存在
+            let current_row = sqlx::query_as!(
+                Tv,
+                "Select * From Tv where id = $1",
+                delete_tv.id
+            )
+            .fetch_optional(pool).await?;
+            match current_row {
 
-    // 首先判断口令是否正确
-    if delete_tv.password.eq("114514") {
-        
-        // 判断当前 Tv 是否存在
-        let current_row = sqlx::query_as!(
-            Tv,
-            "Select * From Tv where id = $1",
-            delete_tv.id
-        )
-        .fetch_optional(pool).await?;
-        match current_row {
+                // 存在则执行删除
+                Some(_current_row) => {
+                    let _row = sqlx::query!(
+                        "Delete From Tv where id = $1",
+                        delete_tv.id
+                    )
+                    .execute(pool)
+                    .await?;
+                    print_log(format!("Delete Tv of id:{}", delete_tv.id));
+                    Ok(format!("Delete Tv of id:{}", delete_tv.id))
+                },
 
-            // 存在则执行删除
-            Some(_current_row) => {
-                let _row = sqlx::query!(
-                    "Delete From tv where id = $1",
-                    delete_tv.id
-                )
-                .execute(pool)
-                .await?;
-                print_log(format!("Delete Tv of id:{}", delete_tv.id));
-                Ok(format!("Delete Tv of id:{}", delete_tv.id))
-            },
-
-            // 不存在返回错误
-            _ => Err(SEVXError::NotFound(format!("Tv of id:{} is not found", delete_tv.id)))
+                // 不存在返回错误
+                _ => Err(SEVXError::NotFound(format!("Tv of id:{} is not found", delete_tv.id)))
+            }
         }
-    
-    // 口令不正确提示认证错误
-    } else {
-        Err(SEVXError::AuthFailed("Password Error".into()))
+
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for delete Tv", delete_tv.name)))
     }
 }

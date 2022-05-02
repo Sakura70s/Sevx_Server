@@ -5,3 +5,4 @@ pub mod sv_handler;
 pub mod music_handler;
 pub mod novel_handler;
 pub mod comic_handler;
+pub mod auth_handler;

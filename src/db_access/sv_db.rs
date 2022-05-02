@@ -2,6 +2,7 @@ use crate::models::sv_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
+use crate::db_access::auth_db::*;
 use crate::log::print_log;
 
 
@@ -329,37 +330,36 @@ pub async fn delete_sv_db (
     pool: &PgPool,
     delete_sv: DeleteSv,
 ) -> Result<String, SEVXError> {
+    // 先进行身份验证
+    let auth = get_auth_db(&pool, delete_sv.name.clone(), delete_sv.password.clone()).await;
+    match auth {
+        Ok(_) => {
+            // 判断当前 Sv 是否存在
+            let current_row = sqlx::query_as!(
+                Sv,
+                "Select * From Sv where id = $1",
+                delete_sv.id
+            )
+            .fetch_optional(pool).await?;
+            match current_row {
 
-    // 首先判断口令是否正确
-    if delete_sv.password.eq("114514") {
-        
-        // 判断当前 Sv 是否存在
-        let current_row = sqlx::query_as!(
-            Sv,
-            "Select * From Sv where id = $1",
-            delete_sv.id
-        )
-        .fetch_optional(pool).await?;
-        match current_row {
+                // 存在则执行删除
+                Some(_current_row) => {
+                    let _row = sqlx::query!(
+                        "Delete From Sv where id = $1",
+                        delete_sv.id
+                    )
+                    .execute(pool)
+                    .await?;
+                    print_log(format!("Delete Sv of id:{}", delete_sv.id));
+                    Ok(format!("Delete Sv of id:{}", delete_sv.id))
+                },
 
-            // 存在则执行删除
-            Some(_current_row) => {
-                let _row = sqlx::query!(
-                    "Delete From sv where id = $1",
-                    delete_sv.id
-                )
-                .execute(pool)
-                .await?;
-                print_log(format!("Delete Sv of id:{}", delete_sv.id));
-                Ok(format!("Delete Sv of id:{}", delete_sv.id))
-            },
-
-            // 不存在返回错误
-            _ => Err(SEVXError::NotFound(format!("Sv of id:{} is not found", delete_sv.id)))
+                // 不存在返回错误
+                _ => Err(SEVXError::NotFound(format!("Sv of id:{} is not found", delete_sv.id)))
+            }
         }
-    
-    // 口令不正确提示认证错误
-    } else {
-        Err(SEVXError::AuthFailed("Password Error".into()))
+
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for delete Sv", delete_sv.name)))
     }
 }

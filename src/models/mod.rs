@@ -5,3 +5,4 @@ pub mod sv_model;
 pub mod music_model;
 pub mod novel_model;
 pub mod comic_model;
+pub mod auth_model;

@@ -160,6 +160,7 @@ impl From<web::Json<UpdateFilm>> for UpdateFilm {
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteFilm {
     pub id: i32,                // <- Film id
+    pub name: String,
     pub password: String,       // <- 口令
 }
 /**
@@ -169,6 +170,7 @@ impl From<web::Json<DeleteFilm>> for DeleteFilm {
     fn from(film: web::Json<DeleteFilm>) -> Self {
         DeleteFilm {
             id: film.id,
+            name: film.name.clone(),
             password: film.password.clone(),
         }
     }

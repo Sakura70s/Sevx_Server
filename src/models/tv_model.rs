@@ -163,6 +163,7 @@ impl From<web::Json<UpdateTv>> for UpdateTv {
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteTv {
     pub id: i32,                // <- Tv id
+    pub name: String,
     pub password: String,       // <- 口令
 }
 /**
@@ -172,6 +173,7 @@ impl From<web::Json<DeleteTv>> for DeleteTv {
     fn from(tv: web::Json<DeleteTv>) -> Self {
         DeleteTv {
             id: tv.id,
+            name: tv.name.clone(),
             password: tv.password.clone(),
         }
     }

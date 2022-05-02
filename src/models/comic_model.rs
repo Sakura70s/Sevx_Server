@@ -125,6 +125,7 @@ impl From<web::Json<UpdateComic>> for UpdateComic {
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteComic {
     pub id: i32,                // <- Comic id
+    pub name: String,
     pub password: String,       // <- 口令
 }
 /**
@@ -134,6 +135,7 @@ impl From<web::Json<DeleteComic>> for DeleteComic {
     fn from(comic: web::Json<DeleteComic>) -> Self {
         DeleteComic {
             id: comic.id,
+            name: comic.name.clone(),
             password: comic.password.clone(),
         }
     }

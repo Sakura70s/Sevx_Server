@@ -2,6 +2,7 @@ use crate::models::music_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
+use crate::db_access::auth_db::*;
 use crate::log::print_log;
 
 
@@ -342,37 +343,36 @@ pub async fn delete_music_db (
     pool: &PgPool,
     delete_music: DeleteMusic,
 ) -> Result<String, SEVXError> {
+    // 先进行身份验证
+    let auth = get_auth_db(&pool, delete_music.name.clone(), delete_music.password.clone()).await;
+    match auth {
+        Ok(_) => {
+            // 判断当前 Music 是否存在
+            let current_row = sqlx::query_as!(
+                Music,
+                "Select * From Music where id = $1",
+                delete_music.id
+            )
+            .fetch_optional(pool).await?;
+            match current_row {
 
-    // 首先判断口令是否正确
-    if delete_music.password.eq("114514") {
-        
-        // 判断当前 Music 是否存在
-        let current_row = sqlx::query_as!(
-            Music,
-            "Select * From Music where id = $1",
-            delete_music.id
-        )
-        .fetch_optional(pool).await?;
-        match current_row {
+                // 存在则执行删除
+                Some(_current_row) => {
+                    let _row = sqlx::query!(
+                        "Delete From Music where id = $1",
+                        delete_music.id
+                    )
+                    .execute(pool)
+                    .await?;
+                    print_log(format!("Delete Music of id:{}", delete_music.id));
+                    Ok(format!("Delete Music of id:{}", delete_music.id))
+                },
 
-            // 存在则执行删除
-            Some(_current_row) => {
-                let _row = sqlx::query!(
-                    "Delete From music where id = $1",
-                    delete_music.id
-                )
-                .execute(pool)
-                .await?;
-                print_log(format!("Delete Music of id:{}", delete_music.id));
-                Ok(format!("Delete Music of id:{}", delete_music.id))
-            },
-
-            // 不存在返回错误
-            _ => Err(SEVXError::NotFound(format!("Music of id:{} is not found", delete_music.id)))
+                // 不存在返回错误
+                _ => Err(SEVXError::NotFound(format!("Music of id:{} is not found", delete_music.id)))
+            }
         }
-    
-    // 口令不正确提示认证错误
-    } else {
-        Err(SEVXError::AuthFailed("Password Error".into()))
+
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for delete Music", delete_music.name)))
     }
 }

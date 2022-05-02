@@ -5,3 +5,4 @@ pub mod sv_db;
 pub mod music_db;
 pub mod novel_db;
 pub mod comic_db;
+pub mod auth_db;

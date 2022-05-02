@@ -52,6 +52,7 @@ async fn main() -> io::Result<()> {
             .configure(routers::music_router::music_routers)
             .configure(routers::novel_router::novel_routers)
             .configure(routers::comic_router::comic_routers)
+            .configure(routers::auth_router::auth_routers)
     };
 
     // 设置监听端口

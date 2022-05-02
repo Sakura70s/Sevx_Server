@@ -130,6 +130,7 @@ impl From<web::Json<UpdateMusic>> for UpdateMusic {
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteMusic {
     pub id: i32,                // <- Music id
+    pub name: String,
     pub password: String,       // <- 口令
 }
 /**
@@ -139,6 +140,7 @@ impl From<web::Json<DeleteMusic>> for DeleteMusic {
     fn from(music: web::Json<DeleteMusic>) -> Self {
         DeleteMusic {
             id: music.id,
+            name: music.name.clone(),
             password: music.password.clone(),
         }
     }

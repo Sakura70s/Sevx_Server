@@ -163,6 +163,7 @@ impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
 #[derive(Deserialize, Debug, Clone)]
 pub struct DeleteAnimation {
     pub id: i32,                // <- Animation id
+    pub name: String,
     pub password: String,       // <- 口令
 }
 /**
@@ -172,6 +173,7 @@ impl From<web::Json<DeleteAnimation>> for DeleteAnimation {
     fn from(animation: web::Json<DeleteAnimation>) -> Self {
         DeleteAnimation {
             id: animation.id,
+            name: animation.name.clone(),
             password: animation.password.clone(),
         }
     }

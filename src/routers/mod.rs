@@ -5,3 +5,4 @@ pub mod sv_router;
 pub mod music_router;
 pub mod novel_router;
 pub mod comic_router;
+pub mod auth_router;
