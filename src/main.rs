@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpServer};
 use std::io;
 use dotenv::dotenv;
-use std::env;
+// use std::env;
 use sqlx::postgres::PgPoolOptions;
 use state::AppState;
 
@@ -29,7 +29,7 @@ async fn main() -> io::Result<()> {
     dotenv().ok();
 
     // 设置连接字符串
-    let database_url = env::var("DATABASE_URL").expect("Not Found");
+    let database_url = String::from("DATABASE_URL");
 
     // 创建连接池
     let db_pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
