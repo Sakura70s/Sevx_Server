@@ -56,7 +56,7 @@ async fn main() -> io::Result<()> {
     };
 
     // 设置监听端口
-    let addr = String::from("localhost:3000");
+    let addr = String::from("localhost:23700");
     println!("年少不知萝莉好，\n只把及笄当块宝。\n如猫般柔软可爱，\n如恶魔狡猾诱人，\n精灵般美丽自然，
                 \n天使般纯真圣洁，\n所以吾之故求也；\n\n吾之独醉萝莉之美，\n豆蔻年华吾之所求。\n\n");
     println!("当前服务器正在监听以下端口：{}", addr);
