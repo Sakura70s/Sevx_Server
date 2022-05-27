@@ -2,7 +2,6 @@ use crate::models::auth_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use crate::log::print_log;
-
 /**
  * 查询记录
  */
@@ -18,7 +17,6 @@ pub async fn get_auth_db(
     )
     .fetch_optional(pool)
     .await?;
-
     match row {
         // 存在
         Some(_row) => Ok(format!("Auth OK")),
@@ -26,7 +24,6 @@ pub async fn get_auth_db(
         _ => Err(SEVXError::AuthFailed("Auth Failed!".into()))
     }
 }
-
 pub async fn get_login_db(
     pool: &PgPool,
     auth: Auth,
@@ -38,7 +35,6 @@ pub async fn get_login_db(
     )
     .fetch_optional(pool)
     .await?;
-
     match row {
         // 存在
         Some(_row) => {

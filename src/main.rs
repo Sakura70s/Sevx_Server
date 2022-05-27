@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpServer};
 use std::io;
 use dotenv::dotenv;
-// use std::env;
+use std::env;
 use sqlx::postgres::PgPoolOptions;
 use state::AppState;
 
@@ -29,12 +29,12 @@ async fn main() -> io::Result<()> {
     dotenv().ok();
 
     // 设置连接字符串
-    let database_url = String::from("DATABASE_URL");
+    let database_url = env::var("DATABASE_URL").expect("Not Found");
 
     // 创建连接池
     let db_pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
-    // 暂时不知道
+    // 实例化Data
     let shared_data = web::Data::new(
         AppState {
             db: db_pool,
@@ -57,7 +57,8 @@ async fn main() -> io::Result<()> {
 
     // 设置监听端口
     let addr = String::from("localhost:3000");
-    println!("年少不知萝莉好，\n只把及笄当块宝。\n如猫般柔软可爱，\n如恶魔狡猾诱人，\n精灵般美丽自然，\n天使般纯真圣洁，\n所以吾之故求也；\n\n吾之独醉萝莉之美，\n豆蔻年华吾之所求。\n\n");
+    println!("年少不知萝莉好，\n只把及笄当块宝。\n如猫般柔软可爱，\n如恶魔狡猾诱人，\n精灵般美丽自然，
+                \n天使般纯真圣洁，\n所以吾之故求也；\n\n吾之独醉萝莉之美，\n豆蔻年华吾之所求。\n\n");
     println!("当前服务器正在监听以下端口：{}", addr);
 
     // 程序入口（开始监听）

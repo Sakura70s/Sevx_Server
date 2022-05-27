@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::animation_db::*;
 use crate::models::animation_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Animation
@@ -51,7 +52,11 @@ pub async fn add_animation (
     new_animation: web::Json<AddAnimation>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_animation_db(&app_state.db, new_animation.try_into()?)
+    let auth = Auth{
+        uname: new_animation.uname.clone(),
+        upassword: new_animation.upassword.clone(),
+    };
+    add_animation_db(&app_state.db, new_animation.try_into()?, auth)
     .await.map(|animation| HttpResponse::Ok().json(animation))
 }
 
@@ -61,8 +66,13 @@ pub async fn add_animation (
 pub async fn update_animation (
     app_state: web::Data<AppState>,
     new_animation: web::Json<UpdateAnimation>,
+    // auth: web::Json<Auth>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_animation_db(&app_state.db, new_animation.into())
+    let auth = Auth{
+        uname: new_animation.uname.clone(),
+        upassword: new_animation.upassword.clone(),
+    };
+    update_animation_db(&app_state.db, new_animation.try_into()?, auth)
     .await
     .map(|animation| HttpResponse::Ok().json(animation))
 }

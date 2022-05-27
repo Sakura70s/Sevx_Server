@@ -40,6 +40,8 @@ pub struct Animation {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddAnimation {
     // pub id: i32,                 // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: bool,           // <- 系列 Flag  
     pub seriesid: i16,              // <- 系列ID
     pub animation_name: String,     // <- 名称
@@ -70,6 +72,8 @@ impl TryFrom<web::Json<AddAnimation>> for AddAnimation {
     fn try_from(add_animation: web::Json<AddAnimation>) -> Result<Self, Self::Error> {
         Ok(AddAnimation {
             // id: add_animation.id,
+            uname: add_animation.uname.clone(),
+            upassword: add_animation.upassword.clone(),
             seriesflag: add_animation.seriesflag,
             seriesid: add_animation.seriesid,
             animation_name: add_animation.animation_name.clone(),
@@ -101,6 +105,8 @@ impl TryFrom<web::Json<AddAnimation>> for AddAnimation {
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateAnimation {
+    pub uname: String,
+    pub upassword: String,
     pub id: i32,                            // <- id
     pub seriesflag: Option<bool>,           // <- 系列 Flag  
     pub seriesid: Option<i16>,              // <- 系列ID
@@ -127,9 +133,12 @@ pub struct UpdateAnimation {
 /**
  * 实现-Animation 更新-From
  */
-impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
-    fn from(animation: web::Json<UpdateAnimation>) -> Self {
-        UpdateAnimation { 
+impl TryFrom<web::Json<UpdateAnimation>> for UpdateAnimation {
+    type Error = SEVXError;
+    fn try_from(animation: web::Json<UpdateAnimation>) -> Result<Self, Self::Error> {
+        Ok(UpdateAnimation { 
+            uname: animation.uname.clone(),
+            upassword: animation.upassword.clone(),
             id: animation.id,
             seriesflag: animation.seriesflag.clone(),
             seriesid: animation.seriesid,
@@ -151,7 +160,7 @@ impl From<web::Json<UpdateAnimation>> for UpdateAnimation {
             subteam: animation.subteam.clone(),
             lastwatch: animation.lastwatch,
             remark: animation.remark.clone(),
-        }
+        })
     }
 }
 
