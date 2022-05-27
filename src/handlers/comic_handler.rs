@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::comic_db::*;
 use crate::models::comic_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Comic
@@ -51,7 +52,11 @@ pub async fn add_comic (
     new_comic: web::Json<AddComic>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_comic_db(&app_state.db, new_comic.try_into()?)
+    let auth = Auth{
+        uname: new_comic.uname.clone(),
+        upassword: new_comic.upassword.clone(),
+    };
+    add_comic_db(&app_state.db, new_comic.try_into()?, auth)
     .await.map(|comic| HttpResponse::Ok().json(comic))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_comic (
     app_state: web::Data<AppState>,
     new_comic: web::Json<UpdateComic>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_comic_db(&app_state.db, new_comic.into())
+    let auth = Auth{
+        uname: new_comic.uname.clone(),
+        upassword: new_comic.upassword.clone(),
+    };
+    update_comic_db(&app_state.db, new_comic.into(), auth)
     .await
     .map(|comic| HttpResponse::Ok().json(comic))
 }

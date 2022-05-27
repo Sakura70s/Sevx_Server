@@ -33,7 +33,9 @@ pub struct Music {
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddMusic {
-    // pub id: i32,                    // <- id
+    // pub id: i32,                 // <- id
+    pub uname: String,
+    pub upassword: String,
     pub music_name: String,         // <- 名称
     pub music_year: NaiveDate,      // <- 年份
     pub logo: String,               // <- 专辑封面
@@ -57,6 +59,8 @@ impl TryFrom<web::Json<AddMusic>> for AddMusic {
     type Error = SEVXError;
     fn try_from(add_music: web::Json<AddMusic>) -> Result<Self, Self::Error> {
         Ok(AddMusic {
+            uname: add_music.uname.clone(),
+            upassword: add_music.upassword.clone(),
             music_name: add_music.music_name.clone(),
             music_year: add_music.music_year,
             logo: add_music.logo.clone(),
@@ -82,6 +86,8 @@ impl TryFrom<web::Json<AddMusic>> for AddMusic {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateMusic {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub music_name: Option<String>,         // <- 名称
     pub music_year: Option<NaiveDate>,      // <- 年份
     pub logo: Option<String>,               // <- 专辑封面
@@ -104,6 +110,8 @@ impl From<web::Json<UpdateMusic>> for UpdateMusic {
     fn from(music: web::Json<UpdateMusic>) -> Self {
         UpdateMusic { 
             id: music.id,
+            uname: music.uname.clone(),
+            upassword: music.upassword.clone(),
             music_name: music.music_name.clone(),
             music_year: music.music_year,
             logo: music.logo.clone(),

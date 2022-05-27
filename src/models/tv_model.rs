@@ -40,6 +40,8 @@ pub struct Tv {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddTv {
     // pub id: i32,                 // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: bool,           // <- 系列 Flag  
     pub seriesid: i16,              // <- 系列ID
     pub tv_name: String,            // <- 名称
@@ -70,6 +72,8 @@ impl TryFrom<web::Json<AddTv>> for AddTv {
     fn try_from(add_tv: web::Json<AddTv>) -> Result<Self, Self::Error> {
         Ok(AddTv {
             // id: add_tv.id,
+            uname: add_tv.uname.clone(),
+            upassword: add_tv.upassword.clone(),
             seriesflag: add_tv.seriesflag,
             seriesid: add_tv.seriesid,
             tv_name: add_tv.tv_name.clone(),
@@ -102,6 +106,8 @@ impl TryFrom<web::Json<AddTv>> for AddTv {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateTv {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: Option<bool>,           // <- 系列 Flag  
     pub seriesid: Option<i16>,              // <- 系列ID
     pub tv_name: Option<String>,            // <- 名称
@@ -129,7 +135,9 @@ pub struct UpdateTv {
  */
 impl From<web::Json<UpdateTv>> for UpdateTv {
     fn from(tv: web::Json<UpdateTv>) -> Self {
-        UpdateTv { 
+        UpdateTv {
+            uname: tv.uname.clone(),
+            upassword: tv.upassword.clone(),
             id: tv.id,
             seriesflag: tv.seriesflag.clone(),
             seriesid: tv.seriesid,

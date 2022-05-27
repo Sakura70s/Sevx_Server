@@ -12,9 +12,9 @@ pub struct Novel {
     pub id: i32,                    // <- id
     pub seriesflag: bool,
     pub seriesid: i16,
-    pub novel_name: String,            // <- 名称
-    pub novel_year: NaiveDate,         // <- 年份
-    pub novel_status: String,            // <- 短片类型
+    pub novel_name: String,         // <- 名称
+    pub novel_year: NaiveDate,      // <- 年份
+    pub novel_status: String,       // <- 短片类型
     pub logo: String,               // <- 剧照
     pub author: String,             // <- 作者
     pub localflag: bool,            // <- 本地 Flag
@@ -32,21 +32,23 @@ pub struct Novel {
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddNovel {
-    // pub id: i32,                    // <- id
+    // pub id: i32,                     // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: bool,
     pub seriesid: i16,
-    pub novel_name: String,            // <- 名称
-    pub novel_year: NaiveDate,         // <- 年份
-    pub novel_status: String,            // <- 短片类型
-    pub logo: String,               // <- 剧照
-    pub author: String,             // <- 作者
-    pub localflag: bool,            // <- 本地 Flag
-    pub localurl: Option<String>,   // <- 本地 URL      Null
-    pub remoteflag: bool,           // <- 远程 Flag 
-    pub remoteurl: Option<String>,  // <- 远程 URL      Null
-    pub container: String,          // <- 容器格式
-    // pub updatetime: NaiveDate,      // <- 更新时间
-    pub remark: Option<String>,     // <- 备注          Null
+    pub novel_name: String,             // <- 名称
+    pub novel_year: NaiveDate,          // <- 年份
+    pub novel_status: String,           // <- 短片类型
+    pub logo: String,                   // <- 剧照
+    pub author: String,                 // <- 作者
+    pub localflag: bool,                // <- 本地 Flag
+    pub localurl: Option<String>,       // <- 本地 URL      Null
+    pub remoteflag: bool,               // <- 远程 Flag 
+    pub remoteurl: Option<String>,      // <- 远程 URL      Null
+    pub container: String,              // <- 容器格式
+    // pub updatetime: NaiveDate,       // <- 更新时间
+    pub remark: Option<String>,         // <- 备注          Null
 }
 /**
  * Novel 添加 实现
@@ -55,6 +57,8 @@ impl TryFrom<web::Json<AddNovel>> for AddNovel {
     type  Error = SEVXError;
     fn try_from(add_novel: web::Json<AddNovel>) -> Result<Self, Self::Error> {
         Ok(AddNovel {
+            uname: add_novel.uname.clone(),
+            upassword: add_novel.upassword.clone(),
             seriesflag: add_novel.seriesflag,
             seriesid: add_novel.seriesid,
             novel_name: add_novel.novel_name.clone(),
@@ -79,11 +83,13 @@ impl TryFrom<web::Json<AddNovel>> for AddNovel {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateNovel {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: Option<bool>,
     pub seriesid: Option<i16>,
-    pub novel_name: Option<String>,            // <- 名称
-    pub novel_year: Option<NaiveDate>,         // <- 年份
-    pub novel_status: Option<String>,            // <- 类型
+    pub novel_name: Option<String>,         // <- 名称
+    pub novel_year: Option<NaiveDate>,      // <- 年份
+    pub novel_status: Option<String>,       // <- 类型
     pub logo: Option<String>,               // <- 剧照
     pub author: Option<String>,             // <- 作者
     pub localflag: Option<bool>,            // <- 本地 Flag
@@ -99,6 +105,8 @@ pub struct UpdateNovel {
 impl From<web::Json<UpdateNovel>> for UpdateNovel {
     fn from(novel: web::Json<UpdateNovel>) -> Self {
         UpdateNovel { 
+            uname: novel.uname.clone(),
+            upassword: novel.upassword.clone(),
             id: novel.id,
             seriesflag: novel.seriesflag,
             seriesid: novel.seriesid,

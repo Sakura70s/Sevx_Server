@@ -1,4 +1,5 @@
 use crate::models::novel_model::*;
+use crate::models::auth_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
@@ -119,185 +120,36 @@ pub async fn search_novel_for_name_db (
 pub async fn add_novel_db (
     pool: &PgPool,
     add_novel: AddNovel,
+    auth: Auth,
 ) -> Result<Novel, SEVXError> {
-    let row = sqlx::query_as!(
-        Novel,
-        "Insert into Novel (
-            seriesflag,
-            seriesid,
-            Novel_name,
-            Novel_year,
-            Novel_status,
-            logo,
-            author,
-            localFlag,
-            localUrl,
-            remoteFlag,
-            remoteUrl,
-            container,
-            remark
-        ) Values (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-            $11, $12, $13
-        ) Returning
-        id,
-        seriesflag,
-        seriesid,
-        novel_name,
-        novel_year,
-        novel_status,
-        logo,
-        author,
-        localflag,
-        localurl,
-        remoteflag,
-        remoteurl,
-        container,
-        updatetime,
-        remark",
-        add_novel.seriesflag,
-        add_novel.seriesid,
-        add_novel.novel_name,
-        add_novel.novel_year,
-        add_novel.novel_status,
-        add_novel.logo,
-        add_novel.author,
-        add_novel.localflag,
-        add_novel.localurl,
-        add_novel.remoteflag,
-        add_novel.remoteurl,
-        add_novel.container,
-        add_novel.remark
-    )
-    .fetch_one(pool)
-    .await?;
-
-    // 成功之后打印 Log， 返回新增加的
-    print_log(format!("Add Novel of name:[{}]", add_novel.novel_name));
-    Ok(row)
-}
-
-
-/**
- * 更新 Novel
- */
-pub async fn update_novel_db (
-    pool: &PgPool,
-    update_novel: UpdateNovel,
-) -> Result<Novel, SEVXError> {
-
-    // 判断要更新课程是否存在
-    let current_novel = sqlx::query_as!(
-        Novel,
-        "Select * from Novel where id = $1", update_novel.id
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|_err| SEVXError::NotFound(format!("Novel of id:{} is not found", update_novel.id)))?;
-
-    // 存在则继续
-
-    // 配置将要更新的变量
-    let seriesflag: bool = match update_novel.seriesflag {
-        Some(seriesflag) => seriesflag,
-        _ => current_novel.seriesflag,
-    };
-    let seriesid: i16 = match update_novel.seriesid {
-        Some(seriesid) => seriesid,
-        _ => current_novel.seriesid,
-    };
-    let novel_name: String = match update_novel.novel_name {
-        Some(novel_name) => novel_name,
-        _ => current_novel.novel_name
-    };
-    let novel_year: NaiveDate = match update_novel.novel_year {
-        Some(novel_year) => novel_year,
-        _ => current_novel.novel_year,
-    };
-    let novel_status: String = match update_novel.novel_status {
-        Some(novel_status) => novel_status,
-        _ => current_novel.novel_status,
-    };
-    let logo: String = match update_novel.logo {
-        Some(logo) => logo,
-        _ => current_novel.logo,
-    };
-    let author: String = match update_novel.author {
-        Some(author) => author,
-        _ => current_novel.author,
-    };
-    let localflag: bool = match update_novel.localflag {
-        Some(localflag) => localflag,
-        _ => current_novel.localflag,
-    };
-    let localurl: String = match update_novel.localurl {
-        Some(localurl) => localurl,
-        _ => current_novel.localurl.unwrap_or_default(),
-    };
-    let remoteflag: bool = match update_novel.remoteflag {
-        Some(remoteflag) => remoteflag,
-        _ => current_novel.remoteflag,
-    };
-    let remoteurl: String = match update_novel.remoteurl {
-        Some(remoteurl) => remoteurl,
-        _ => current_novel.remoteurl.unwrap_or_default(),
-    };
-    let container: String = match update_novel.container {
-        Some(container) => container,
-        _ => current_novel.container,
-    };
-    let updatetime: NaiveDate = {
-        let fmt = "%Y-%m-%d";
-        let now = format!("{}", Local::now().format(fmt));
-        NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
-    };
-    let remark: String = match update_novel.remark {
-        Some(remark) => remark,
-        _ => current_novel.remark.unwrap_or_default(),
-    };
-
-    // 修改
-    let novel_row = sqlx::query_as!(
-        Novel,
-        "
-        Update Novel 
-        set 
-        seriesflag = $1,
-        seriesid = $2,
-        Novel_name = $3,
-        Novel_year = $4,
-        Novel_status = $5,
-        logo = $6,
-        author = $7,
-        localFlag = $8,
-        localUrl = $9,
-        remoteFlag = $10,
-        remoteUrl = $11,
-        container = $12,
-        updatetime = $13,
-        remark = $14
-        Where id = $15
-            Returning
-            id,
-            seriesflag,
-            seriesid,
-            novel_name,
-            novel_year,
-            novel_status,
-            logo,
-            author,
-            localflag,
-            localurl,
-            remoteflag,
-            remoteurl,
-            container,
-            updatetime,
-            remark
-        ",
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            let row = sqlx::query_as!(
+                Novel,
+                "Insert into Novel (
+                    seriesflag,
+                    seriesid,
+                    Novel_name,
+                    Novel_year,
+                    Novel_status,
+                    logo,
+                    author,
+                    localFlag,
+                    localUrl,
+                    remoteFlag,
+                    remoteUrl,
+                    container,
+                    remark
+                ) Values (
+                    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+                    $11, $12, $13
+                ) Returning
+                id,
                 seriesflag,
                 seriesid,
                 novel_name,
-                novel_year, 
+                novel_year,
                 novel_status,
                 logo,
                 author,
@@ -307,19 +159,183 @@ pub async fn update_novel_db (
                 remoteurl,
                 container,
                 updatetime,
-                remark,
-                update_novel.id,
-    )
-    .fetch_one(pool)
-    .await;
+                remark",
+                add_novel.seriesflag,
+                add_novel.seriesid,
+                add_novel.novel_name,
+                add_novel.novel_year,
+                add_novel.novel_status,
+                add_novel.logo,
+                add_novel.author,
+                add_novel.localflag,
+                add_novel.localurl,
+                add_novel.remoteflag,
+                add_novel.remoteurl,
+                add_novel.container,
+                add_novel.remark
+            )
+            .fetch_one(pool)
+            .await?;
+        
+            // 成功之后打印 Log， 返回新增加的
+            print_log(format!("Add Novel of name:[{}]", add_novel.novel_name));
+            Ok(row)
+        }
 
-    // 判断是否修改成功
-    match novel_row {
-        Ok(novel_row) => {
-            print_log(format!("Update Novel of id:{}, name:[{}]", update_novel.id, novel_name));
-            Ok(novel_row)
-        },
-        Err(_novel_row) => Err(SEVXError::DBError("Update Failed".into())),
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Add Novel", auth.uname)))
+    }
+}
+
+
+/**
+ * 更新 Novel
+ */
+pub async fn update_novel_db (
+    pool: &PgPool,
+    update_novel: UpdateNovel,
+    auth: Auth,
+) -> Result<Novel, SEVXError> {
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            // 判断要更新课程是否存在
+            let current_novel = sqlx::query_as!(
+                Novel,
+                "Select * from Novel where id = $1", update_novel.id
+            )
+            .fetch_one(pool)
+            .await
+            .map_err(|_err| SEVXError::NotFound(format!("Novel of id:{} is not found", update_novel.id)))?;
+
+            // 存在则继续
+
+            // 配置将要更新的变量
+            let seriesflag: bool = match update_novel.seriesflag {
+                Some(seriesflag) => seriesflag,
+                _ => current_novel.seriesflag,
+            };
+            let seriesid: i16 = match update_novel.seriesid {
+                Some(seriesid) => seriesid,
+                _ => current_novel.seriesid,
+            };
+            let novel_name: String = match update_novel.novel_name {
+                Some(novel_name) => novel_name,
+                _ => current_novel.novel_name
+            };
+            let novel_year: NaiveDate = match update_novel.novel_year {
+                Some(novel_year) => novel_year,
+                _ => current_novel.novel_year,
+            };
+            let novel_status: String = match update_novel.novel_status {
+                Some(novel_status) => novel_status,
+                _ => current_novel.novel_status,
+            };
+            let logo: String = match update_novel.logo {
+                Some(logo) => logo,
+                _ => current_novel.logo,
+            };
+            let author: String = match update_novel.author {
+                Some(author) => author,
+                _ => current_novel.author,
+            };
+            let localflag: bool = match update_novel.localflag {
+                Some(localflag) => localflag,
+                _ => current_novel.localflag,
+            };
+            let localurl: String = match update_novel.localurl {
+                Some(localurl) => localurl,
+                _ => current_novel.localurl.unwrap_or_default(),
+            };
+            let remoteflag: bool = match update_novel.remoteflag {
+                Some(remoteflag) => remoteflag,
+                _ => current_novel.remoteflag,
+            };
+            let remoteurl: String = match update_novel.remoteurl {
+                Some(remoteurl) => remoteurl,
+                _ => current_novel.remoteurl.unwrap_or_default(),
+            };
+            let container: String = match update_novel.container {
+                Some(container) => container,
+                _ => current_novel.container,
+            };
+            let updatetime: NaiveDate = {
+                let fmt = "%Y-%m-%d";
+                let now = format!("{}", Local::now().format(fmt));
+                NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
+            };
+            let remark: String = match update_novel.remark {
+                Some(remark) => remark,
+                _ => current_novel.remark.unwrap_or_default(),
+            };
+
+            // 修改
+            let novel_row = sqlx::query_as!(
+                Novel,
+                "
+                Update Novel 
+                set 
+                seriesflag = $1,
+                seriesid = $2,
+                Novel_name = $3,
+                Novel_year = $4,
+                Novel_status = $5,
+                logo = $6,
+                author = $7,
+                localFlag = $8,
+                localUrl = $9,
+                remoteFlag = $10,
+                remoteUrl = $11,
+                container = $12,
+                updatetime = $13,
+                remark = $14
+                Where id = $15
+                    Returning
+                    id,
+                    seriesflag,
+                    seriesid,
+                    novel_name,
+                    novel_year,
+                    novel_status,
+                    logo,
+                    author,
+                    localflag,
+                    localurl,
+                    remoteflag,
+                    remoteurl,
+                    container,
+                    updatetime,
+                    remark
+                ",
+                        seriesflag,
+                        seriesid,
+                        novel_name,
+                        novel_year, 
+                        novel_status,
+                        logo,
+                        author,
+                        localflag,
+                        localurl,
+                        remoteflag,
+                        remoteurl,
+                        container,
+                        updatetime,
+                        remark,
+                        update_novel.id,
+            )
+            .fetch_one(pool)
+            .await;
+
+            // 判断是否修改成功
+            match novel_row {
+                Ok(novel_row) => {
+                    print_log(format!("Update Novel of id:{}, name:[{}]", update_novel.id, novel_name));
+                    Ok(novel_row)
+                },
+                Err(_novel_row) => Err(SEVXError::DBError("Update Failed".into())),
+            }
+        }
+
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Update Novel", auth.uname)))
     }
 }
 

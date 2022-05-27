@@ -32,6 +32,8 @@ pub struct Sv {
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddSv {
+    pub uname: String,
+    pub upassword: String,
     pub sv_name: String,            // <- 名称
     pub sv_year: NaiveDate,         // <- 年份
     pub sv_type: String,            // <- 短片类型
@@ -53,6 +55,8 @@ impl TryFrom<web::Json<AddSv>> for AddSv {
     type Error = SEVXError;
     fn try_from(add_sv: web::Json<AddSv>) -> Result<Self, Self::Error> {
         Ok(AddSv {
+            uname: add_sv.uname.clone(),
+            upassword: add_sv.upassword.clone(),
             sv_name: add_sv.sv_name.clone(),
             sv_year: add_sv.sv_year,
             sv_type: add_sv.sv_type.clone(),
@@ -77,6 +81,8 @@ impl TryFrom<web::Json<AddSv>> for AddSv {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateSv {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub sv_name: Option<String>,            // <- 名称
     pub sv_year: Option<NaiveDate>,         // <- 年份
     pub sv_type: Option<String>,            // <- 类型
@@ -97,6 +103,8 @@ pub struct UpdateSv {
 impl From<web::Json<UpdateSv>> for UpdateSv {
     fn from(sv: web::Json<UpdateSv>) -> Self {
         UpdateSv { 
+            uname: sv.uname.clone(),
+            upassword: sv.upassword.clone(),
             id: sv.id,
             sv_name: sv.sv_name.clone(),
             sv_year: sv.sv_year,

@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::tv_db::*;
 use crate::models::tv_model::*;
+use  crate::models::auth_model::*;
 
 /**
  * 获取所有 Tv
@@ -51,7 +52,11 @@ pub async fn add_tv (
     new_tv: web::Json<AddTv>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_tv_db(&app_state.db, new_tv.try_into()?)
+    let auth = Auth{
+        uname: new_tv.uname.clone(),
+        upassword: new_tv.upassword.clone(),
+    };
+    add_tv_db(&app_state.db, new_tv.try_into()?, auth)
     .await.map(|tv| HttpResponse::Ok().json(tv))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_tv (
     app_state: web::Data<AppState>,
     new_tv: web::Json<UpdateTv>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_tv_db(&app_state.db, new_tv.into())
+    let auth = Auth{
+        uname: new_tv.uname.clone(),
+        upassword: new_tv.upassword.clone(),
+    };
+    update_tv_db(&app_state.db, new_tv.into(), auth)
     .await
     .map(|tv| HttpResponse::Ok().json(tv))
 }

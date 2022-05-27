@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::sv_db::*;
 use crate::models::sv_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Sv
@@ -51,7 +52,11 @@ pub async fn add_sv (
     new_sv: web::Json<AddSv>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_sv_db(&app_state.db, new_sv.try_into()?)
+    let auth = Auth{
+        uname: new_sv.uname.clone(),
+        upassword: new_sv.upassword.clone(),
+    };
+    add_sv_db(&app_state.db, new_sv.try_into()?, auth)
     .await.map(|sv| HttpResponse::Ok().json(sv))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_sv (
     app_state: web::Data<AppState>,
     new_sv: web::Json<UpdateSv>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_sv_db(&app_state.db, new_sv.into())
+    let auth = Auth{
+        uname: new_sv.uname.clone(),
+        upassword: new_sv.upassword.clone(),
+    };
+    update_sv_db(&app_state.db, new_sv.into(), auth)
     .await
     .map(|sv| HttpResponse::Ok().json(sv))
 }

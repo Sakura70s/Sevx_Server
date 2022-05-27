@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::novel_db::*;
 use crate::models::novel_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Novel
@@ -51,7 +52,11 @@ pub async fn add_novel (
     new_novel: web::Json<AddNovel>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_novel_db(&app_state.db, new_novel.try_into()?)
+    let auth = Auth{
+        uname: new_novel.uname.clone(),
+        upassword: new_novel.upassword.clone(),
+    };
+    add_novel_db(&app_state.db, new_novel.try_into()?, auth)
     .await.map(|novel| HttpResponse::Ok().json(novel))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_novel (
     app_state: web::Data<AppState>,
     new_novel: web::Json<UpdateNovel>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_novel_db(&app_state.db, new_novel.into())
+    let auth = Auth{
+        uname: new_novel.uname.clone(),
+        upassword: new_novel.upassword.clone(),
+    };
+    update_novel_db(&app_state.db, new_novel.into(), auth)
     .await
     .map(|novel| HttpResponse::Ok().json(novel))
 }

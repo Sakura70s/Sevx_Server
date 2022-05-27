@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::film_db::*;
 use crate::models::film_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Film
@@ -51,7 +52,11 @@ pub async fn add_film (
     new_film: web::Json<AddFilm>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_film_db(&app_state.db, new_film.try_into()?)
+    let auth = Auth{
+        uname: new_film.uname.clone(),
+        upassword: new_film.upassword.clone(),
+    };
+    add_film_db(&app_state.db, new_film.try_into()?, auth)
     .await.map(|film| HttpResponse::Ok().json(film))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_film (
     app_state: web::Data<AppState>,
     new_film: web::Json<UpdateFilm>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_film_db(&app_state.db, new_film.into())
+    let auth = Auth{
+        uname: new_film.uname.clone(),
+        upassword: new_film.upassword.clone(),
+    };
+    update_film_db(&app_state.db, new_film.into(), auth)
     .await
     .map(|film| HttpResponse::Ok().json(film))
 }

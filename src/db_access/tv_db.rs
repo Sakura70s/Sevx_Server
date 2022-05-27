@@ -1,4 +1,5 @@
 use crate::models::tv_model::*;
+use crate::models::auth_model::*;
 use sqlx::postgres::PgPool;
 use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
@@ -133,81 +134,89 @@ pub async fn search_tv_for_name_db (
 pub async fn add_tv_db (
     pool: &PgPool,
     add_tv: AddTv,
+    auth: Auth,
 ) -> Result<Tv, SEVXError> {
-    let row = sqlx::query_as!(
-        Tv,
-        "Insert into Tv (
-            seriesFlag,
-            seriesId,
-            Tv_name,
-            Tv_year,
-            director,
-            screenWriter,
-            make,
-            logo,
-            amount,
-            localFlag,
-            localUrl,
-            remoteFlag,
-            remoteUrl,
-            container,
-            codev,
-            codea,
-            subType,
-            subTeam,
-            remark
-        ) Values (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-            $11, $12, $13, $14, $15, $16, $17, $18, $19
-        ) Returning
-        id,
-        seriesFlag,
-        seriesId,
-        tv_name,
-        tv_year,
-        director,
-        screenwriter,
-        make,
-        logo,
-        amount,
-        localflag,
-        localurl,
-        remoteflag,
-        remoteurl,
-        container,
-        codev,
-        codea,
-        subtype,
-        subteam,
-        lastwatch,
-        updatetime,
-        remark",
-        add_tv.seriesflag,
-        add_tv.seriesid,
-        add_tv.tv_name,
-        add_tv.tv_year,
-        add_tv.director,
-        add_tv.screenwriter,
-        add_tv.make,
-        add_tv.logo,
-        add_tv.amount,
-        add_tv.localflag,
-        add_tv.localurl,
-        add_tv.remoteflag,
-        add_tv.remoteurl,
-        add_tv.container,
-        add_tv.codev,
-        add_tv.codea,
-        add_tv.subtype,
-        add_tv.subteam,
-        add_tv.remark
-    )
-    .fetch_one(pool)
-    .await?;
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            let row = sqlx::query_as!(
+                Tv,
+                "Insert into Tv (
+                    seriesFlag,
+                    seriesId,
+                    Tv_name,
+                    Tv_year,
+                    director,
+                    screenWriter,
+                    make,
+                    logo,
+                    amount,
+                    localFlag,
+                    localUrl,
+                    remoteFlag,
+                    remoteUrl,
+                    container,
+                    codev,
+                    codea,
+                    subType,
+                    subTeam,
+                    remark
+                ) Values (
+                    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+                    $11, $12, $13, $14, $15, $16, $17, $18, $19
+                ) Returning
+                id,
+                seriesFlag,
+                seriesId,
+                tv_name,
+                tv_year,
+                director,
+                screenwriter,
+                make,
+                logo,
+                amount,
+                localflag,
+                localurl,
+                remoteflag,
+                remoteurl,
+                container,
+                codev,
+                codea,
+                subtype,
+                subteam,
+                lastwatch,
+                updatetime,
+                remark",
+                add_tv.seriesflag,
+                add_tv.seriesid,
+                add_tv.tv_name,
+                add_tv.tv_year,
+                add_tv.director,
+                add_tv.screenwriter,
+                add_tv.make,
+                add_tv.logo,
+                add_tv.amount,
+                add_tv.localflag,
+                add_tv.localurl,
+                add_tv.remoteflag,
+                add_tv.remoteurl,
+                add_tv.container,
+                add_tv.codev,
+                add_tv.codea,
+                add_tv.subtype,
+                add_tv.subteam,
+                add_tv.remark
+            )
+            .fetch_one(pool)
+            .await?;
+        
+            // 成功之后打印 Log， 返回新增加的
+            print_log(format!("Add Tv of name:[{}]", add_tv.tv_name));
+            Ok(row)
+        }
 
-    // 成功之后打印 Log， 返回新增加的
-    print_log(format!("Add Tv of name:[{}]", add_tv.tv_name));
-    Ok(row)
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Add Tv", auth.uname)))
+    }
 }
 
 
@@ -217,141 +226,148 @@ pub async fn add_tv_db (
 pub async fn update_tv_db (
     pool: &PgPool,
     update_tv: UpdateTv,
+    auth: Auth,
 ) -> Result<Tv, SEVXError> {
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            // 判断要更新Tv是否存在
+            let current_tv = sqlx::query_as!(
+                Tv,
+                "Select * from Tv where id = $1", update_tv.id
+            )
+            .fetch_one(pool)
+            .await
+            .map_err(|_err| SEVXError::NotFound(format!("Tv of id:{} is not found", update_tv.id)))?;
 
-    // 判断要更新课程是否存在
-    let current_tv = sqlx::query_as!(
-        Tv,
-        "Select * from Tv where id = $1", update_tv.id
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|_err| SEVXError::NotFound(format!("Tv of id:{} is not found", update_tv.id)))?;
+            // 存在则继续
 
-    // 存在则继续
+            // 配置将要更新的变量
+            let seriesflag: bool = match update_tv.seriesflag {
+                Some(seriesflag) => seriesflag,
+                _ => current_tv.seriesflag,
+            };
+            let seriesid: i16 = match update_tv.seriesid {
+                Some(seriesid) => seriesid,
+                _ => current_tv.seriesid,
+            };
+            let tv_name: String = match update_tv.tv_name {
+                Some(tv_name) => tv_name,
+                _ => current_tv.tv_name
+            };
+            let tv_year: NaiveDate = match update_tv.tv_year {
+                Some(tv_year) => tv_year,
+                _ => current_tv.tv_year,
+            };
+            let director: String = match update_tv.director {
+                Some(director) => director,
+                _ => current_tv.director,
+            };
+            let screenwriter: String = match update_tv.screenwriter {
+                Some(screenwriter) => screenwriter,
+                _ => current_tv.screenwriter,
+            };
+            let make: String = match update_tv.make {
+                Some(make) => make,
+                _ => current_tv.make,
+            };
+            let logo: String = match update_tv.logo {
+                Some(logo) => logo,
+                _ => current_tv.logo,
+            };
+            let amount: i16 = match update_tv.amount {
+                Some(amount) => amount,
+                _ => current_tv.amount,
+            };
+            let localflag: bool = match update_tv.localflag {
+                Some(localflag) => localflag,
+                _ => current_tv.localflag,
+            };
+            let localurl: String = match update_tv.localurl {
+                Some(localurl) => localurl,
+                _ => current_tv.localurl.unwrap_or_default(),
+            };
+            let remoteflag: bool = match update_tv.remoteflag {
+                Some(remoteflag) => remoteflag,
+                _ => current_tv.remoteflag,
+            };
+            let remoteurl: String = match update_tv.remoteurl {
+                Some(remoteurl) => remoteurl,
+                _ => current_tv.remoteurl.unwrap_or_default(),
+            };
+            let container: String = match update_tv.container {
+                Some(container) => container,
+                _ => current_tv.container,
+            };
+            let codev: String = match update_tv.codev {
+                Some(codev) => codev,
+                _ => current_tv.codev,
+            };
+            let codea: String = match update_tv.codea {
+                Some(codea) => codea,
+                _ => current_tv.codea,
+            };
+            let subtype: String = match update_tv.subtype {
+                Some(subtype) => subtype,
+                _ => current_tv.subtype,
+            };
+            let subteam: String = match update_tv.subteam {
+                Some(subteam) => subteam,
+                _ => current_tv.subteam.unwrap_or_default(),
+            };
+            let lastwatch: NaiveDate = match update_tv.lastwatch {
+                Some(lastwatch) => lastwatch,
+                _ => current_tv.lastwatch,
+            };
+            let updatetime: NaiveDate = {
+                let fmt = "%Y-%m-%d";
+                let now = format!("{}", Local::now().format(fmt));
+                NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
+            };
+            let remark: String = match update_tv.remark {
+                Some(remark) => remark,
+                _ => current_tv.remark.unwrap_or_default(),
+            };
 
-    // 配置将要更新的变量
-    let seriesflag: bool = match update_tv.seriesflag {
-        Some(seriesflag) => seriesflag,
-        _ => current_tv.seriesflag,
-    };
-    let seriesid: i16 = match update_tv.seriesid {
-        Some(seriesid) => seriesid,
-        _ => current_tv.seriesid,
-    };
-    let tv_name: String = match update_tv.tv_name {
-        Some(tv_name) => tv_name,
-        _ => current_tv.tv_name
-    };
-    let tv_year: NaiveDate = match update_tv.tv_year {
-        Some(tv_year) => tv_year,
-        _ => current_tv.tv_year,
-    };
-    let director: String = match update_tv.director {
-        Some(director) => director,
-        _ => current_tv.director,
-    };
-    let screenwriter: String = match update_tv.screenwriter {
-        Some(screenwriter) => screenwriter,
-        _ => current_tv.screenwriter,
-    };
-    let make: String = match update_tv.make {
-        Some(make) => make,
-        _ => current_tv.make,
-    };
-    let logo: String = match update_tv.logo {
-        Some(logo) => logo,
-        _ => current_tv.logo,
-    };
-    let amount: i16 = match update_tv.amount {
-        Some(amount) => amount,
-        _ => current_tv.amount,
-    };
-    let localflag: bool = match update_tv.localflag {
-        Some(localflag) => localflag,
-        _ => current_tv.localflag,
-    };
-    let localurl: String = match update_tv.localurl {
-        Some(localurl) => localurl,
-        _ => current_tv.localurl.unwrap_or_default(),
-    };
-    let remoteflag: bool = match update_tv.remoteflag {
-        Some(remoteflag) => remoteflag,
-        _ => current_tv.remoteflag,
-    };
-    let remoteurl: String = match update_tv.remoteurl {
-        Some(remoteurl) => remoteurl,
-        _ => current_tv.remoteurl.unwrap_or_default(),
-    };
-    let container: String = match update_tv.container {
-        Some(container) => container,
-        _ => current_tv.container,
-    };
-    let codev: String = match update_tv.codev {
-        Some(codev) => codev,
-        _ => current_tv.codev,
-    };
-    let codea: String = match update_tv.codea {
-        Some(codea) => codea,
-        _ => current_tv.codea,
-    };
-    let subtype: String = match update_tv.subtype {
-        Some(subtype) => subtype,
-        _ => current_tv.subtype,
-    };
-    let subteam: String = match update_tv.subteam {
-        Some(subteam) => subteam,
-        _ => current_tv.subteam.unwrap_or_default(),
-    };
-    let lastwatch: NaiveDate = match update_tv.lastwatch {
-        Some(lastwatch) => lastwatch,
-        _ => current_tv.lastwatch,
-    };
-    let updatetime: NaiveDate = {
-        let fmt = "%Y-%m-%d";
-        let now = format!("{}", Local::now().format(fmt));
-        NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
-    };
-    let remark: String = match update_tv.remark {
-        Some(remark) => remark,
-        _ => current_tv.remark.unwrap_or_default(),
-    };
+            // 修改
+            let tv_row = sqlx::query_as!(
+                Tv,
+                "
+                Update Tv set seriesflag = $1, seriesid = $2, tv_name = $3,
+                tv_year = $4, director = $5, screenwriter = $6,
+                make = $7, logo = $8, amount = $9,
+                localflag = $10, localurl = $11,remoteflag = $12, 
+                remoteurl = $13, container = $14, codev = $15,
+                codea = $16, subtype = $17, subteam = $18,
+                lastwatch = $19, updatetime = $20, remark = $21
+                Where id = $22
+                Returning
+                id, seriesFlag, seriesId, tv_name, tv_year, director,
+                screenwriter, make, logo, amount, localflag, localurl, remoteflag,
+                remoteurl, container, codev, codea, subtype, subteam, lastwatch,
+                updatetime, remark
+                ", seriesflag, seriesid, tv_name,
+                tv_year, director, screenwriter,
+                make, logo, amount,
+                localflag, localurl, remoteflag,
+                remoteurl, container, codev,
+                codea, subtype, subteam,
+                lastwatch, updatetime, remark, update_tv.id,
+            )
+            .fetch_one(pool)
+            .await;
 
-    // 修改
-    let tv_row = sqlx::query_as!(
-        Tv,
-        "
-        Update Tv set seriesflag = $1, seriesid = $2, tv_name = $3,
-        tv_year = $4, director = $5, screenwriter = $6,
-        make = $7, logo = $8, amount = $9,
-        localflag = $10, localurl = $11,remoteflag = $12, 
-        remoteurl = $13, container = $14, codev = $15,
-        codea = $16, subtype = $17, subteam = $18,
-        lastwatch = $19, updatetime = $20, remark = $21
-        Where id = $22
-        Returning
-        id, seriesFlag, seriesId, tv_name, tv_year, director,
-        screenwriter, make, logo, amount, localflag, localurl, remoteflag,
-        remoteurl, container, codev, codea, subtype, subteam, lastwatch,
-        updatetime, remark
-        ", seriesflag, seriesid, tv_name,
-        tv_year, director, screenwriter,
-        make, logo, amount,
-        localflag, localurl, remoteflag,
-        remoteurl, container, codev,
-        codea, subtype, subteam,
-        lastwatch, updatetime, remark, update_tv.id,
-    )
-    .fetch_one(pool)
-    .await;
+            // 判断是否修改成功
+            match tv_row {
+                Ok(tv_row) => {
+                    print_log(format!("Update Tv of id:{}, name:[{}]", update_tv.id, tv_name));
+                    Ok(tv_row)
+                },
+                Err(_tv_row) => Err(SEVXError::DBError("Update Failed".into())),
+            }
+        }
 
-    // 判断是否修改成功
-    match tv_row {
-        Ok(tv_row) => {
-            print_log(format!("Update Tv of id:{}, name:[{}]", update_tv.id, tv_name));
-            Ok(tv_row)
-        },
-        Err(_tv_row) => Err(SEVXError::DBError("Update Failed".into())),
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Update Tv", auth.uname)))
     }
 }
 

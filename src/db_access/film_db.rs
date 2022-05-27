@@ -4,6 +4,7 @@ use crate::error::SEVXError;
 use chrono::{NaiveDate, Local};
 use crate::db_access::auth_db::*;
 use crate::log::print_log;
+use crate::models::auth_model::*;
 
 
 /**
@@ -131,78 +132,84 @@ pub async fn search_film_for_name_db (
 pub async fn add_film_db (
     pool: &PgPool,
     add_film: AddFilm,
+    auth: Auth,
 ) -> Result<Film, SEVXError> {
-    let row = sqlx::query_as!(
-        Film,
-        "Insert into Film (
-            seriesFlag,
-            seriesId,
-            Film_name,
-            Film_year,
-            director,
-            screenWriter,
-            make,
-            logo,
-            localFlag,
-            localUrl,
-            remoteFlag,
-            remoteUrl,
-            container,
-            codev,
-            codea,
-            subType,
-            subTeam,
-            remark
-        ) Values (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-            $11, $12, $13, $14, $15, $16, $17, $18
-        ) Returning
-        id,
-        seriesFlag,
-        seriesId,
-        film_name,
-        film_year,
-        director,
-        screenwriter,
-        make,
-        logo,
-        localflag,
-        localurl,
-        remoteflag,
-        remoteurl,
-        container,
-        codev,
-        codea,
-        subtype,
-        subteam,
-        lastwatch,
-        updatetime,
-        remark",
-        add_film.seriesflag,
-        add_film.seriesid,
-        add_film.film_name,
-        add_film.film_year,
-        add_film.director,
-        add_film.screenwriter,
-        add_film.make,
-        add_film.logo,
-        add_film.localflag,
-        add_film.localurl,
-        add_film.remoteflag,
-        add_film.remoteurl,
-        add_film.container,
-        add_film.codev,
-        add_film.codea,
-        add_film.subtype,
-        add_film.subteam,
-        add_film.remark
-    )
-    .fetch_one(pool)
-    .await?;
-
-    // 成功之后打印 Log， 返回新增加的
-    print_log(format!("Add Film of name:[{}]", add_film.film_name));
-    Ok(row)
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            let row = sqlx::query_as!(
+                Film,
+                "Insert into Film (
+                    seriesFlag,
+                    seriesId,
+                    Film_name,
+                    Film_year,
+                    director,
+                    screenWriter,
+                    make,
+                    logo,
+                    localFlag,
+                    localUrl,
+                    remoteFlag,
+                    remoteUrl,
+                    container,
+                    codev,
+                    codea,
+                    subType,
+                    subTeam,
+                    remark
+                ) Values (
+                    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+                    $11, $12, $13, $14, $15, $16, $17, $18
+                ) Returning
+                id,
+                seriesFlag,
+                seriesId,
+                film_name,
+                film_year,
+                director,
+                screenwriter,
+                make,
+                logo,
+                localflag,
+                localurl,
+                remoteflag,
+                remoteurl,
+                container,
+                codev,
+                codea,
+                subtype,
+                subteam,
+                lastwatch,
+                updatetime,
+                remark",
+                add_film.seriesflag,
+                add_film.seriesid,
+                add_film.film_name,
+                add_film.film_year,
+                add_film.director,
+                add_film.screenwriter,
+                add_film.make,
+                add_film.logo,
+                add_film.localflag,
+                add_film.localurl,
+                add_film.remoteflag,
+                add_film.remoteurl,
+                add_film.container,
+                add_film.codev,
+                add_film.codea,
+                add_film.subtype,
+                add_film.subteam,
+                add_film.remark
+            )
+            .fetch_one(pool)
+            .await?;
+            // 成功之后打印 Log， 返回新增加的
+            print_log(format!("Add Film of name:[{}]", add_film.film_name));
+            Ok(row)
+        }
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Add Film", auth.uname)))
+    }
 }
 
 
@@ -212,137 +219,143 @@ pub async fn add_film_db (
 pub async fn update_film_db (
     pool: &PgPool,
     update_film: UpdateFilm,
+    auth: Auth
 ) -> Result<Film, SEVXError> {
+    let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
+    match auth_res {
+        Ok(_) => {
+            // 判断要更新课程是否存在
+            let current_film = sqlx::query_as!(
+                Film,
+                "Select * from Film where id = $1", update_film.id
+            )
+            .fetch_one(pool)
+            .await
+            .map_err(|_err| SEVXError::NotFound(format!("Film of id:{} is not found", update_film.id)))?;
 
-    // 判断要更新课程是否存在
-    let current_film = sqlx::query_as!(
-        Film,
-        "Select * from Film where id = $1", update_film.id
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|_err| SEVXError::NotFound(format!("Film of id:{} is not found", update_film.id)))?;
+            // 存在则继续
 
-    // 存在则继续
+            // 配置将要更新的变量
+            let seriesflag: bool = match update_film.seriesflag {
+                Some(seriesflag) => seriesflag,
+                _ => current_film.seriesflag,
+            };
+            let seriesid: i16 = match update_film.seriesid {
+                Some(seriesid) => seriesid,
+                _ => current_film.seriesid,
+            };
+            let film_name: String = match update_film.film_name {
+                Some(film_name) => film_name,
+                _ => current_film.film_name
+            };
+            let film_year: NaiveDate = match update_film.film_year {
+                Some(film_year) => film_year,
+                _ => current_film.film_year,
+            };
+            let director: String = match update_film.director {
+                Some(director) => director,
+                _ => current_film.director,
+            };
+            let screenwriter: String = match update_film.screenwriter {
+                Some(screenwriter) => screenwriter,
+                _ => current_film.screenwriter,
+            };
+            let make: String = match update_film.make {
+                Some(make) => make,
+                _ => current_film.make,
+            };
+            let logo: String = match update_film.logo {
+                Some(logo) => logo,
+                _ => current_film.logo,
+            };
+            let localflag: bool = match update_film.localflag {
+                Some(localflag) => localflag,
+                _ => current_film.localflag,
+            };
+            let localurl: String = match update_film.localurl {
+                Some(localurl) => localurl,
+                _ => current_film.localurl.unwrap_or_default(),
+            };
+            let remoteflag: bool = match update_film.remoteflag {
+                Some(remoteflag) => remoteflag,
+                _ => current_film.remoteflag,
+            };
+            let remoteurl: String = match update_film.remoteurl {
+                Some(remoteurl) => remoteurl,
+                _ => current_film.remoteurl.unwrap_or_default(),
+            };
+            let container: String = match update_film.container {
+                Some(container) => container,
+                _ => current_film.container,
+            };
+            let codev: String = match update_film.codev {
+                Some(codev) => codev,
+                _ => current_film.codev,
+            };
+            let codea: String = match update_film.codea {
+                Some(codea) => codea,
+                _ => current_film.codea,
+            };
+            let subtype: String = match update_film.subtype {
+                Some(subtype) => subtype,
+                _ => current_film.subtype,
+            };
+            let subteam: String = match update_film.subteam {
+                Some(subteam) => subteam,
+                _ => current_film.subteam.unwrap_or_default(),
+            };
+            let lastwatch: NaiveDate = match update_film.lastwatch {
+                Some(lastwatch) => lastwatch,
+                _ => current_film.lastwatch,
+            };
+            let updatetime: NaiveDate = {
+                let fmt = "%Y-%m-%d";
+                let now = format!("{}", Local::now().format(fmt));
+                NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
+            };
+            let remark: String = match update_film.remark {
+                Some(remark) => remark,
+                _ => current_film.remark.unwrap_or_default(),
+            };
 
-    // 配置将要更新的变量
-    let seriesflag: bool = match update_film.seriesflag {
-        Some(seriesflag) => seriesflag,
-        _ => current_film.seriesflag,
-    };
-    let seriesid: i16 = match update_film.seriesid {
-        Some(seriesid) => seriesid,
-        _ => current_film.seriesid,
-    };
-    let film_name: String = match update_film.film_name {
-        Some(film_name) => film_name,
-        _ => current_film.film_name
-    };
-    let film_year: NaiveDate = match update_film.film_year {
-        Some(film_year) => film_year,
-        _ => current_film.film_year,
-    };
-    let director: String = match update_film.director {
-        Some(director) => director,
-        _ => current_film.director,
-    };
-    let screenwriter: String = match update_film.screenwriter {
-        Some(screenwriter) => screenwriter,
-        _ => current_film.screenwriter,
-    };
-    let make: String = match update_film.make {
-        Some(make) => make,
-        _ => current_film.make,
-    };
-    let logo: String = match update_film.logo {
-        Some(logo) => logo,
-        _ => current_film.logo,
-    };
-    let localflag: bool = match update_film.localflag {
-        Some(localflag) => localflag,
-        _ => current_film.localflag,
-    };
-    let localurl: String = match update_film.localurl {
-        Some(localurl) => localurl,
-        _ => current_film.localurl.unwrap_or_default(),
-    };
-    let remoteflag: bool = match update_film.remoteflag {
-        Some(remoteflag) => remoteflag,
-        _ => current_film.remoteflag,
-    };
-    let remoteurl: String = match update_film.remoteurl {
-        Some(remoteurl) => remoteurl,
-        _ => current_film.remoteurl.unwrap_or_default(),
-    };
-    let container: String = match update_film.container {
-        Some(container) => container,
-        _ => current_film.container,
-    };
-    let codev: String = match update_film.codev {
-        Some(codev) => codev,
-        _ => current_film.codev,
-    };
-    let codea: String = match update_film.codea {
-        Some(codea) => codea,
-        _ => current_film.codea,
-    };
-    let subtype: String = match update_film.subtype {
-        Some(subtype) => subtype,
-        _ => current_film.subtype,
-    };
-    let subteam: String = match update_film.subteam {
-        Some(subteam) => subteam,
-        _ => current_film.subteam.unwrap_or_default(),
-    };
-    let lastwatch: NaiveDate = match update_film.lastwatch {
-        Some(lastwatch) => lastwatch,
-        _ => current_film.lastwatch,
-    };
-    let updatetime: NaiveDate = {
-        let fmt = "%Y-%m-%d";
-        let now = format!("{}", Local::now().format(fmt));
-        NaiveDate::parse_from_str(&now, "%Y-%m-%d").unwrap()
-    };
-    let remark: String = match update_film.remark {
-        Some(remark) => remark,
-        _ => current_film.remark.unwrap_or_default(),
-    };
+            // 修改
+            let film_row = sqlx::query_as!(
+                Film,
+                "
+                Update Film set seriesflag = $1, seriesid = $2, film_name = $3,
+                film_year = $4, director = $5, screenwriter = $6,
+                make = $7, logo = $8,
+                localflag = $9, localurl = $10,remoteflag = $11, 
+                remoteurl = $12, container = $13, codev = $14,
+                codea = $15, subtype = $16, subteam = $17,
+                lastwatch = $18, updatetime = $19, remark = $20
+                Where id = $21
+                Returning
+                id, seriesFlag, seriesId, film_name, film_year, director,
+                screenwriter, make, logo, localflag, localurl, remoteflag,
+                remoteurl, container, codev, codea, subtype, subteam, lastwatch,
+                updatetime, remark
+                ", seriesflag, seriesid, film_name,
+                film_year, director, screenwriter,
+                make, logo,
+                localflag, localurl, remoteflag,
+                remoteurl, container, codev,
+                codea, subtype, subteam,
+                lastwatch, updatetime, remark, update_film.id,
+            )
+            .fetch_one(pool)
+            .await;
 
-    // 修改
-    let film_row = sqlx::query_as!(
-        Film,
-        "
-        Update Film set seriesflag = $1, seriesid = $2, film_name = $3,
-        film_year = $4, director = $5, screenwriter = $6,
-        make = $7, logo = $8,
-        localflag = $9, localurl = $10,remoteflag = $11, 
-        remoteurl = $12, container = $13, codev = $14,
-        codea = $15, subtype = $16, subteam = $17,
-        lastwatch = $18, updatetime = $19, remark = $20
-        Where id = $21
-        Returning
-        id, seriesFlag, seriesId, film_name, film_year, director,
-        screenwriter, make, logo, localflag, localurl, remoteflag,
-        remoteurl, container, codev, codea, subtype, subteam, lastwatch,
-        updatetime, remark
-        ", seriesflag, seriesid, film_name,
-        film_year, director, screenwriter,
-        make, logo,
-        localflag, localurl, remoteflag,
-        remoteurl, container, codev,
-        codea, subtype, subteam,
-        lastwatch, updatetime, remark, update_film.id,
-    )
-    .fetch_one(pool)
-    .await;
-
-    // 判断是否修改成功
-    match film_row {
-        Ok(film_row) => {
-            print_log(format!("Update Film of id:{}, name:[{}]", update_film.id, film_name));
-            Ok(film_row)
-        },
-        Err(_film_row) => Err(SEVXError::DBError("Update Failed".into())),
+            // 判断是否修改成功
+            match film_row {
+                Ok(film_row) => {
+                    print_log(format!("Update Film of id:{}, name:[{}]", update_film.id, film_name));
+                    Ok(film_row)
+                },
+                Err(_film_row) => Err(SEVXError::DBError("Update Failed".into())),
+            }
+        }
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Update Film", auth.uname)))
     }
 }
 

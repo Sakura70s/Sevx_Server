@@ -2,6 +2,7 @@ use crate::{state::AppState, error::SEVXError};
 use actix_web::{web, HttpResponse};
 use crate::db_access::music_db::*;
 use crate::models::music_model::*;
+use crate::models::auth_model::*;
 
 /**
  * 获取所有 Music
@@ -51,7 +52,11 @@ pub async fn add_music (
     new_music: web::Json<AddMusic>,
     app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, SEVXError> {
-    add_music_db(&app_state.db, new_music.try_into()?)
+    let auth = Auth{
+        uname: new_music.uname.clone(),
+        upassword: new_music.upassword.clone(),
+    };
+    add_music_db(&app_state.db, new_music.try_into()?, auth)
     .await.map(|music| HttpResponse::Ok().json(music))
 }
 
@@ -62,7 +67,11 @@ pub async fn update_music (
     app_state: web::Data<AppState>,
     new_music: web::Json<UpdateMusic>,
 ) -> Result<HttpResponse, SEVXError> {
-    update_music_db(&app_state.db, new_music.into())
+    let auth = Auth{
+        uname: new_music.uname.clone(),
+        upassword: new_music.upassword.clone(),
+    };
+    update_music_db(&app_state.db, new_music.into(), auth)
     .await
     .map(|music| HttpResponse::Ok().json(music))
 }

@@ -137,7 +137,6 @@ pub async fn add_animation_db (
     add_animation: AddAnimation,
     auth: Auth,
 ) -> Result<Animation, SEVXError> {
-
     let auth_res = get_auth_db(&pool, auth.uname.clone(), auth.upassword.clone()).await;
     match auth_res {
         Ok(_) => {
@@ -216,7 +215,7 @@ pub async fn add_animation_db (
             print_log(format!("Add Animation of name:[{}]", add_animation.animation_name));
             Ok(row)
         }
-        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for update Animation", auth.uname)))
+        Err(_) => Err(SEVXError::AuthFailed(format!("Auth Failed of name:[{}] for Update Animation", auth.uname)))
     }
 
 }

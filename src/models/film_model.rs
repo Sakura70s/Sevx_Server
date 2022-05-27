@@ -39,6 +39,8 @@ pub struct Film {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddFilm {
     // pub id: i32,                 // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: bool,           // <- 系列 Flag  
     pub seriesid: i16,              // <- 系列ID
     pub film_name: String,          // <- 名称
@@ -69,6 +71,8 @@ impl TryFrom<web::Json<AddFilm>> for AddFilm {
     fn try_from(add_film: web::Json<AddFilm>) -> Result<Self, Self::Error> {
         Ok(AddFilm {
             // id: add_Film.id,
+            uname: add_film.uname.clone(),
+            upassword: add_film.upassword.clone(),
             seriesflag: add_film.seriesflag,
             seriesid: add_film.seriesid,
             film_name: add_film.film_name.clone(),
@@ -100,6 +104,8 @@ impl TryFrom<web::Json<AddFilm>> for AddFilm {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateFilm {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: Option<bool>,           // <- 系列 Flag  
     pub seriesid: Option<i16>,              // <- 系列ID
     pub film_name: Option<String>,          // <- 名称
@@ -129,6 +135,8 @@ impl From<web::Json<UpdateFilm>> for UpdateFilm {
     fn from(film: web::Json<UpdateFilm>) -> Self {
         UpdateFilm { 
             id: film.id,
+            uname: film.uname.clone(),
+            upassword: film.upassword.clone(),
             seriesflag: film.seriesflag.clone(),
             seriesid: film.seriesid,
             film_name: film.film_name.clone(),

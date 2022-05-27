@@ -12,9 +12,9 @@ pub struct Comic {
     pub id: i32,                    // <- id
     pub seriesflag: bool,
     pub seriesid: i16,
-    pub comic_name: String,            // <- 名称
-    pub comic_year: NaiveDate,         // <- 年份
-    pub comic_status: String,            // <- 短片类型
+    pub comic_name: String,         // <- 名称
+    pub comic_year: NaiveDate,      // <- 年份
+    pub comic_status: String,       // <- 短片类型
     pub logo: String,               // <- 剧照
     pub author: String,             // <- 作者
     pub localflag: bool,            // <- 本地 Flag
@@ -32,12 +32,14 @@ pub struct Comic {
  */
 #[derive(Deserialize, Debug, Clone)]
 pub struct AddComic {
-    // pub id: i32,                    // <- id
+    // pub id: i32,                 // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: bool,
     pub seriesid: i16,
-    pub comic_name: String,            // <- 名称
-    pub comic_year: NaiveDate,         // <- 年份
-    pub comic_status: String,            // <- 短片类型
+    pub comic_name: String,         // <- 名称
+    pub comic_year: NaiveDate,      // <- 年份
+    pub comic_status: String,       // <- 短片类型
     pub logo: String,               // <- 剧照
     pub author: String,             // <- 作者
     pub localflag: bool,            // <- 本地 Flag
@@ -45,7 +47,7 @@ pub struct AddComic {
     pub remoteflag: bool,           // <- 远程 Flag 
     pub remoteurl: Option<String>,  // <- 远程 URL      Null
     pub container: String,          // <- 容器格式
-    // pub updatetime: NaiveDate,      // <- 更新时间
+    // pub updatetime: NaiveDate,   // <- 更新时间
     pub remark: Option<String>,     // <- 备注          Null
 }
 /**
@@ -55,6 +57,8 @@ impl TryFrom<web::Json<AddComic>> for AddComic {
     type  Error = SEVXError;
     fn try_from(add_comic: web::Json<AddComic>) -> Result<Self, Self::Error> {
         Ok(AddComic {
+            uname: add_comic.uname.clone(),
+            upassword: add_comic.upassword.clone(),
             seriesflag: add_comic.seriesflag,
             seriesid: add_comic.seriesid,
             comic_name: add_comic.comic_name.clone(),
@@ -79,11 +83,13 @@ impl TryFrom<web::Json<AddComic>> for AddComic {
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateComic {
     pub id: i32,                            // <- id
+    pub uname: String,
+    pub upassword: String,
     pub seriesflag: Option<bool>,
     pub seriesid: Option<i16>,
-    pub comic_name: Option<String>,            // <- 名称
-    pub comic_year: Option<NaiveDate>,         // <- 年份
-    pub comic_status: Option<String>,            // <- 类型
+    pub comic_name: Option<String>,         // <- 名称
+    pub comic_year: Option<NaiveDate>,      // <- 年份
+    pub comic_status: Option<String>,       // <- 类型
     pub logo: Option<String>,               // <- 剧照
     pub author: Option<String>,             // <- 作者
     pub localflag: Option<bool>,            // <- 本地 Flag
@@ -100,6 +106,8 @@ impl From<web::Json<UpdateComic>> for UpdateComic {
     fn from(comic: web::Json<UpdateComic>) -> Self {
         UpdateComic { 
             id: comic.id,
+            uname: comic.uname.clone(),
+            upassword: comic.upassword.clone(),
             seriesflag: comic.seriesflag,
             seriesid: comic.seriesid,
             comic_name: comic.comic_name.clone(),
